@@ -112,7 +112,7 @@ const questions = computed(() => [
   },
   {
     key: 'team_size',
-    title: __('How many people will use Frappe CRM?'),
+    title: __('How many people will use PC CRM?'),
     options: [
       { label: __('Just me'), value: 'just_me' },
       { label: __('2–5'), value: '2_5' },
@@ -137,7 +137,7 @@ const questions = computed(() => [
 ])
 
 usePageMeta(() => ({
-  title: __('Welcome to Frappe CRM'),
+  title: __('Welcome to PC CRM'),
   icon: brand.favicon,
 }))
 </script>

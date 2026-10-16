@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PC CRM — Complete Database Architecture & Storage Specification</title>
+<style>
+  @page {
+    size: A4;
+    margin: 18mm 16mm 20mm 16mm;
+    @bottom-right {
+      content: counter(page);
+    }
+  }
+
+  *, *:before, *:after {
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #0f172a;
+    background: #ffffff;
+    line-height: 1.55;
+    font-size: 10pt;
+    margin: 0;
+    padding: 0;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  h1, h2, h3, h4, h5 {
+    color: #0f172a;
+    font-weight: 700;
+    margin-top: 1.3em;
+    margin-bottom: 0.4em;
+    page-break-after: avoid;
+  }
+
+  h1 {
+    font-size: 21pt;
+    border-bottom: 2.5px solid #2563eb;
+    padding-bottom: 6px;
+    margin-top: 0;
+    color: #1e3a8a;
+  }
+
+  h2 {
+    font-size: 14pt;
+    border-bottom: 1.5px solid #cbd5e1;
+    padding-bottom: 4px;
+    margin-top: 1.5em;
+    color: #1e40af;
+  }
+
+  h3 {
+    font-size: 11.5pt;
+    color: #1e293b;
+    margin-top: 1.1em;
+  }
+
+  h4 {
+    font-size: 10.5pt;
+    color: #334155;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 0.9em;
+  }
+
+  p {
+    margin-top: 0.3em;
+    margin-bottom: 0.7em;
+  }
+
+  ul, ol {
+    margin-top: 0.3em;
+    margin-bottom: 0.7em;
+    padding-left: 22px;
+  }
+
+  li {
+    margin-bottom: 0.3em;
+  }
+
+  .page-break {
+    page-break-before: always;
+  }
+
+  .avoid-break {
+    page-break-inside: avoid;
+  }
+
+  /* Cover Page */
+  .cover {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 45px 30px 30px 30px;
+    background: linear-gradient(135deg, #0b132b 0%, #1c2541 45%, #3a506b 100%);
+    color: #ffffff;
+    border-radius: 6px;
+    page-break-after: always;
+  }
+
+  .cover-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255,255,255,0.25);
+    padding-bottom: 18px;
+  }
+
+  .cover-badge {
+    background: #2563eb;
+    color: #ffffff;
+    font-size: 8.5pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 5px 14px;
+    border-radius: 20px;
+    display: inline-block;
+  }
+
+  .cover-system-tag {
+    font-size: 9.5pt;
+    color: #93c5fd;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  .cover-main {
+    margin-top: 50px;
+    margin-bottom: 50px;
+  }
+
+  .cover-main h1 {
+    font-size: 30pt;
+    color: #ffffff;
+    border-bottom: none;
+    line-height: 1.15;
+    margin-bottom: 16px;
+    font-weight: 800;
+  }
+
+  .cover-subtitle {
+    font-size: 13pt;
+    color: #cbd5e1;
+    line-height: 1.5;
+    max-width: 660px;
+    margin-bottom: 25px;
+  }
+
+  .cover-pills {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+  }
+
+  .pill {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    padding: 5px 12px;
+    border-radius: 5px;
+    font-size: 9pt;
+    color: #e2e8f0;
+    font-weight: 500;
+  }
+
+  .cover-footer {
+    border-top: 1px solid rgba(255,255,255,0.25);
+    padding-top: 18px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 9pt;
+    color: #94a3b8;
+  }
+
+  /* Callout Boxes */
+  .callout {
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin: 14px 0;
+    border-left: 4px solid #2563eb;
+    background: #f8fafc;
+    font-size: 9.5pt;
+    page-break-inside: avoid;
+  }
+
+  .callout-title {
+    font-weight: 700;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .callout-db {
+    border-left-color: #059669;
+    background: #ecfdf5;
+    color: #064e3b;
+  }
+  .callout-db .callout-title { color: #047857; }
+
+  .callout-engine {
+    border-left-color: #7c3aed;
+    background: #f5f3ff;
+    color: #4c1d95;
+  }
+  .callout-engine .callout-title { color: #6d28d9; }
+
+  .callout-warning {
+    border-left-color: #d97706;
+    background: #fffbeb;
+    color: #78350f;
+  }
+  .callout-warning .callout-title { color: #b45309; }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+    font-size: 9pt;
+    page-break-inside: avoid;
+  }
+
+  th {
+    background: #f1f5f9;
+    color: #0f172a;
+    font-weight: 600;
+    text-align: left;
+    padding: 7px 10px;
+    border: 1px solid #cbd5e1;
+  }
+
+  td {
+    padding: 6px 10px;
+    border: 1px solid #e2e8f0;
+    vertical-align: top;
+  }
+
+  tr:nth-child(even) td {
+    background: #f8fafc;
+  }
+
+  /* Code & Pre */
+  code {
+    background: #f1f5f9;
+    color: #0f172a;
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 8.5pt;
+  }
+
+  pre {
+    background: #0f172a;
+    color: #f8fafc;
+    padding: 12px 14px;
+    border-radius: 6px;
+    overflow-x: auto;
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 8.5pt;
+    line-height: 1.4;
+    page-break-inside: avoid;
+    margin: 12px 0;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 7.5pt;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .badge-blue { background: #dbeafe; color: #1e40af; }
+  .badge-green { background: #dcfce7; color: #166534; }
+  .badge-amber { background: #fef3c7; color: #92400e; }
+  .badge-purple { background: #f3e8ff; color: #6b21a8; }
+  .badge-slate { background: #f1f5f9; color: #334155; }
+
+  .grid-2col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin: 12px 0;
+    page-break-inside: avoid;
+  }
+
+  .card-box {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 12px 14px;
+  }
+
+  .card-box h4 {
+    margin-top: 0;
+    color: #1e293b;
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 4px;
+  }
+
+  .toc {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 18px 22px;
+    margin-bottom: 20px;
+  }
+
+  .toc-title {
+    font-size: 14pt;
+    font-weight: 700;
+    color: #1e293b;
+    border-bottom: 2px solid #cbd5e1;
+    padding-bottom: 6px;
+    margin-top: 0;
+    margin-bottom: 14px;
+  }
+
+  .toc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 20px;
+  }
+
+  .toc-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 9.5pt;
+    padding: 3px 0;
+    border-bottom: 1px dashed #e2e8f0;
+  }
+
+  .toc-item a {
+    color: #334155;
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .toc-item span {
+    color: #2563eb;
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER PAGE -->
+<div class="cover">
+  <div class="cover-header">
+    <div class="cover-badge">Database Architecture Specification</div>
+    <div class="cover-system-tag">PC CRM Enterprise Platform</div>
+  </div>
+
+  <div class="cover-main">
+    <h1>PC CRM Database Architecture & Storage Engine Manual</h1>
+    <div class="cover-subtitle">
+      A comprehensive deep-dive into the relational schema, storage engine mechanics, table relationships, metadata catalog, and MariaDB optimization of PC CRM.
+    </div>
+
+    <div class="cover-pills">
+      <div class="pill">MariaDB 11.x Enterprise</div>
+      <div class="pill">InnoDB ACID Transactions</div>
+      <div class="pill">Entity-Relationship Layout</div>
+      <div class="pill">Child Table Parentage</div>
+      <div class="pill">Single-Row Settings Pattern</div>
+      <div class="pill">Audit Trail & Versioning</div>
+      <div class="pill">Indexing & Query Optimization</div>
+    </div>
+  </div>
+
+  <div class="cover-footer">
+    <div>PC CRM Database Engineering &bull; Version 2026.1</div>
+    <div>Target Audience: System Architects, Database Administrators & Technical Leads</div>
+  </div>
+</div>
+
+<!-- TABLE OF CONTENTS -->
+<div class="toc page-break">
+  <div class="toc-title">Table of Contents</div>
+  <div class="toc-grid">
+    <div class="toc-item"><span>01</span><a href="#ch1">Why MariaDB for PC CRM?</a></div>
+    <div class="toc-item"><span>02</span><a href="#ch2">Storage Engine & UTF8MB4 Standards</a></div>
+    <div class="toc-item"><span>03</span><a href="#ch3">The Standard Document Record Layout</a></div>
+    <div class="toc-item"><span>04</span><a href="#ch4">Entity Relationship Model (ERD)</a></div>
+    <div class="toc-item"><span>05</span><a href="#ch5">Core Sales Pipeline Tables</a></div>
+    <div class="toc-item"><span>06</span><a href="#ch6">Account & Stakeholder Tables</a></div>
+    <div class="toc-item"><span>07</span><a href="#ch7">Child Tables & Line Item Composition</a></div>
+    <div class="toc-item"><span>08</span><a href="#ch8">Activity, Task & Omnichannel Storage</a></div>
+    <div class="toc-item"><span>09</span><a href="#ch9">Service Level Agreements (SLA) Schema</a></div>
+    <div class="toc-item"><span>10</span><a href="#ch10">Territory & Hierarchy Data Structures</a></div>
+    <div class="toc-item"><span>11</span><a href="#ch11">The Single Table Pattern (tabSingles)</a></div>
+    <div class="toc-item"><span>12</span><a href="#ch12">Audit Trails, Versions & Change Tracking</a></div>
+    <div class="toc-item"><span>13</span><a href="#ch13">Indexing Strategies & Query Performance</a></div>
+    <div class="toc-item"><span>14</span><a href="#ch14">Maintenance, Backups & Disaster Recovery</a></div>
+  </div>
+</div>
+
+<!-- CHAPTER 1: WHY MARIADB -->
+<div id="ch1">
+  <h1>1. Why MariaDB for PC CRM?</h1>
+  <p>
+    The foundation of PC CRM is built upon <strong>MariaDB</strong>. The architectural decision to standardize on MariaDB over other database engines is rooted in four essential enterprise requirements: transactional reliability, high-concurrency performance, native JSON flexibility, and open enterprise governance.
+  </p>
+
+  <div class="grid-2col">
+    <div class="card-box" style="border-top: 3px solid #2563eb;">
+      <h4>1. Strict ACID Compliance with InnoDB</h4>
+      <p>
+        In customer relationship and sales management, monetary transactions, deal stages, and customer conversions must never experience dirty reads or lost updates. MariaDB delivers true ACID guarantees via the InnoDB storage engine, with row-level locking and multi-version concurrency control (MVCC).
+      </p>
+    </div>
+
+    <div class="card-box" style="border-top: 3px solid #059669;">
+      <h4>2. Hybrid Relational + Document Flexibility</h4>
+      <p>
+        PC CRM combines strict relational tables (Leads, Deals, Organizations) with dynamic JSON fields for flexible payloads (e.g., custom form layouts, webhook responses, geolocation tracking). MariaDB native JSON functions allow instant indexing and querying of nested JSON attributes without sacrificing relational integrity.
+      </p>
+    </div>
+  </div>
+
+  <div class="grid-2col">
+    <div class="card-box" style="border-top: 3px solid #7c3aed;">
+      <h4>3. High-Throughput Connection Pooling</h4>
+      <p>
+        PC CRM serves fast API endpoints and real-time websocket activity feeds. MariaDB's thread pool architecture efficiently handles hundreds of concurrent sales agents querying pipeline filters simultaneously with minimal CPU overhead.
+      </p>
+    </div>
+
+    <div class="card-box" style="border-top: 3px solid #d97706;">
+      <h4>4. Open Source Freedom & Reliability</h4>
+      <p>
+        MariaDB ensures zero vendor lock-in, active community security patches, and full compatibility with enterprise clustering solutions (Galera Cluster) for multi-master high-availability deployments.
+      </p>
+    </div>
+  </div>
+
+  <div class="callout callout-db">
+    <div class="callout-title">Database Engine Verification in PC CRM</div>
+    In PC CRM, all application tables are created with <code>ENGINE = InnoDB</code> and character set <code>utf8mb4</code> with collation <code>utf8mb4_unicode_ci</code>, ensuring flawless multi-language support (emojis, international contact names, and multi-currency symbols).
+  </div>
+</div>
+
+<!-- CHAPTER 2 & 3: ENGINE & STANDARD RECORD LAYOUT -->
+<div id="ch2" class="page-break">
+  <h1>2. Storage Engine & Database Configuration</h1>
+  <p>
+    PC CRM enforces a dedicated MariaDB configuration profile (<code>/etc/mysql/mariadb.conf.d/99-pc-crm.cnf</code>) tailored for transaction-heavy CRM operations:
+  </p>
+
+  <pre><code>[mysqld]
+# Full 4-byte UTF-8 support for names, emojis & international symbols
+character-set-client-handshake = FALSE
+character-set-server           = utf8mb4
+collation-server               = utf8mb4_unicode_ci
+
+# Transaction isolation & InnoDB memory configuration
+transaction-isolation          = READ-COMMITTED
+innodb_buffer_pool_size        = 1G              # Adjust to 70% of available RAM in production
+innodb_file_per_table          = 1
+innodb_flush_log_at_trx_commit = 2
+innodb_log_buffer_size         = 64M
+
+[mysql]
+default-character-set          = utf8mb4</code></pre>
+
+  <div id="ch3">
+    <h2>3. The Standard Document Record Layout</h2>
+    <p>
+      In PC CRM, every physical entity table is prefixed with <strong><code>tab</code></strong> (e.g., <code>tabCRM Deal</code>, <code>tabCRM Lead</code>). Every single table automatically inherits <strong>7 mandatory system columns</strong> that power document identity, ownership, audit trails, and transactional state:
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 20%;">Column Name</th>
+          <th style="width: 22%;">Data Type</th>
+          <th style="width: 18%;">Constraints</th>
+          <th>Description & Architectural Purpose</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>name</code></td>
+          <td><code>VARCHAR(140)</code></td>
+          <td><span class="badge badge-blue">PRIMARY KEY</span></td>
+          <td>The unique business ID of the document (e.g., <code>CRM-DEAL-2026-00001</code>, <code>LEAD-00214</code>, or sanitized slug).</td>
+        </tr>
+        <tr>
+          <td><code>creation</code></td>
+          <td><code>DATETIME(6)</code></td>
+          <td>NOT NULL</td>
+          <td>Microsecond-accurate timestamp recording when the row was first inserted into the database.</td>
+        </tr>
+        <tr>
+          <td><code>modified</code></td>
+          <td><code>DATETIME(6)</code></td>
+          <td>NOT NULL, INDEXED</td>
+          <td>Timestamp of the latest update. Used for optimistic locking and cache invalidation.</td>
+        </tr>
+        <tr>
+          <td><code>modified_by</code></td>
+          <td><code>VARCHAR(140)</code></td>
+          <td>NOT NULL</td>
+          <td>User ID (email) who performed the most recent update.</td>
+        </tr>
+        <tr>
+          <td><code>owner</code></td>
+          <td><code>VARCHAR(140)</code></td>
+          <td>NOT NULL, INDEXED</td>
+          <td>User ID (email) who originally created the record. Drives user-level permission boundaries.</td>
+        </tr>
+        <tr>
+          <td><code>docstatus</code></td>
+          <td><code>INT(1)</code></td>
+          <td>DEFAULT 0</td>
+          <td>Document lifecycle state: <code>0 = Saved/Draft</code>, <code>1 = Submitted (Locked)</code>, <code>2 = Cancelled</code>.</td>
+        </tr>
+        <tr>
+          <td><code>idx</code></td>
+          <td><code>INT(8)</code></td>
+          <td>DEFAULT 0</td>
+          <td>Sequence position. Critical in child tables for preserving line-item display order.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- CHAPTER 4: ENTITY RELATIONSHIP MODEL -->
+<div id="ch4" class="page-break">
+  <h1>4. Entity Relationship Model (ERD)</h1>
+  <p>
+    The relational architecture of PC CRM organizes the entire commercial lifecycle into cohesive domains: Inbound Prospecting, Active Pipeline, Account Mapping, and Execution Activities.
+  </p>
+
+  <pre><code>┌────────────────────────────────────────────────────────────────────────────────────────┐
+│                              PC CRM RELATIONAL SCHEMA MAP                              │
+└────────────────────────────────────────────────────────────────────────────────────────┘
+
+    ┌───────────────────────────┐                    ┌────────────────────────────┐
+    │        tabCRM Lead        │ 1-Click Convert    │    tabCRM Organization     │
+    │───────────────────────────│───────────────────>│────────────────────────────│
+    │ PK: name                  │                    │ PK: name                   │
+    │     lead_name             │                    │     organization_name      │
+    │     status (FK)           │                    │     website, domain        │
+    │     lead_owner (FK)       │                    │     industry (FK)          │
+    │     organization (FK)     │                    │     territory (FK)         │
+    │     contact (FK)          │                    └─────────────┬──────────────┘
+    └─────────────┬─────────────┘                                  │ 1
+                  │                                                │
+                  │                                                │ has many (1:N)
+                  │                                                ▼
+                  │                                  ┌────────────────────────────┐
+                  │                                  │         tabContact         │
+                  │                                  │────────────────────────────│
+                  │                                  │ PK: name                   │
+                  │                                  │     first_name, last_name  │
+                  │                                  │     email_id, mobile_no    │
+                  │                                  │     organization (FK)      │
+                  │                                  └─────────────┬──────────────┘
+                  │                                                │
+                  │                                                │ links to
+                  ▼                                                ▼
+    ┌─────────────────────────────────────────────────────────────────────────────┐
+    │                                 tabCRM Deal                                 │
+    │─────────────────────────────────────────────────────────────────────────────│
+    │ PK: name                         (e.g., 'CRM-DEAL-2026-00001')              │
+    │ FK: organization                 ──> tabCRM Organization.name               │
+    │ FK: status                       ──> tabCRM Deal Status.name                │
+    │ FK: deal_owner                   ──> tabUser.name                           │
+    │ FK: territory                    ──> tabCRM Territory.name                  │
+    │ FK: sla                          ──> tabCRM Service Level Agreement.name    │
+    │ FK: lost_reason                  ──> tabCRM Lost Reason.name                │
+    │     deal_value                   ──> DECIMAL(21, 9)                         │
+    │     probability                  ──> DECIMAL(5, 2)                          │
+    │     expected_deal_value          ──> DECIMAL(21, 9)                         │
+    │     expected_closure_date        ──> DATE                                   │
+    │     closed_date                  ──> DATE                                   │
+    └──────────────────────┬───────────────────────────────┬──────────────────────┘
+                           │ 1:N                           │ 1:N
+                           ▼                               ▼
+            ┌────────────────────────────┐  ┌────────────────────────────┐
+            │      tabCRM Products       │  │      tabCRM Call Log       │
+            │      (Child Line Items)    │  │      (Telephony Events)    │
+            │────────────────────────────│  │────────────────────────────│
+            │ PK: name                   │  │ PK: name                   │
+            │ FK: parent (CRM Deal)      │  │     from_number, to_number │
+            │     product, qty           │  │     duration, status       │
+            │     rate, amount           │  │     telephony_provider     │
+            └────────────────────────────┘  └────────────────────────────┘
+                           │                               │
+                           └───────────────┬───────────────┘
+                                           │ Polymorphic References
+                                           ▼
+            ┌────────────────────────────────────────────────────────────┐
+            │                 tabCRM Task  /  tabFCRM Note               │
+            │────────────────────────────────────────────────────────────│
+            │ reference_doctype: 'CRM Deal' | 'CRM Lead' | 'tabContact'  │
+            │ reference_name:    Document Primary Key                    │
+            └────────────────────────────────────────────────────────────┘</code></pre>
+</div>
+
+<!-- CHAPTER 5 & 6: PIPELINE & ACCOUNT TABLES -->
+<div id="ch5" class="page-break">
+  <h1>5. Core Sales Pipeline Tables</h1>
+
+  <h3>Table: <code>tabCRM Deal</code> (Active Revenue Opportunities)</h3>
+  <p>The central transactional table storing all pipeline opportunities:</p>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Column Name</th>
+        <th style="width: 20%;">SQL Data Type</th>
+        <th style="width: 20%;">Relationship</th>
+        <th>Field Description & Usage</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>name</code></td>
+        <td><code>VARCHAR(140)</code></td>
+        <td>PRIMARY KEY</td>
+        <td>Formatted deal number (e.g. <code>CRM-DEAL-.YYYY.-.#####</code>).</td>
+      </tr>
+      <tr>
+        <td><code>organization</code></td>
+        <td><code>VARCHAR(140)</code></td>
+        <td>FK &rarr; <code>tabCRM Organization</code></td>
+        <td>The buyer company record.</td>
+      </tr>
+      <tr>
+        <td><code>status</code></td>
+        <td><code>VARCHAR(140)</code></td>
+        <td>FK &rarr; <code>tabCRM Deal Status</code></td>
+        <td>Current sales pipeline stage (e.g., Prospecting, Proposal, Won, Lost).</td>
+      </tr>
+      <tr>
+        <td><code>deal_owner</code></td>
+        <td><code>VARCHAR(140)</code></td>
+        <td>FK &rarr; <code>tabUser</code></td>
+        <td>The assigned account executive.</td>
+      </tr>
+      <tr>
+        <td><code>deal_value</code></td>
+        <td><code>DECIMAL(21, 9)</code></td>
+        <td>Value</td>
+        <td>Gross deal amount in local or quote currency.</td>
+      </tr>
+      <tr>
+        <td><code>currency</code></td>
+        <td><code>VARCHAR(140)</code></td>
+        <td>Currency Link</td>
+        <td>ISO Currency Code (USD, EUR, GBP, INR).</td>
+      </tr>
+      <tr>
+        <td><code>probability</code></td>
+        <td><code>DECIMAL(5, 2)</code></td>
+        <td>Percentage</td>
+        <td>Win probability percentage (0.00% to 100.00%).</td>
+      </tr>
+      <tr>
+        <td><code>expected_deal_value</code></td>
+        <td><code>DECIMAL(21, 9)</code></td>
+        <td>Computed</td>
+        <td>Forecast revenue: <code>deal_value &times; (probability / 100)</code>.</td>
+      </tr>
+      <tr>
+        <td><code>expected_closure_date</code></td>
+        <td><code>DATE</code></td>
+        <td>Target Date</td>
+        <td>Forecast target date for closing contract.</td>
+      </tr>
+      <tr>
+        <td><code>closed_date</code></td>
+        <td><code>DATE</code></td>
+        <td>Actual Date</td>
+        <td>Actual timestamp when marked Won or Lost.</td>
+      </tr>
+      <tr>
+        <td><code>lost_reason</code></td>
+        <td><code>VARCHAR(140)</code></td>
+        <td>FK &rarr; <code>tabCRM Lost Reason</code></td>
+        <td>Mandatory reason if status is changed to Lost.</td>
+      </tr>
+      <tr>
+        <td><code>sla</code></td>
+        <td><code>VARCHAR(140)</code></td>
+        <td>FK &rarr; <code>tabCRM SLA</code></td>
+        <td>Assigned Service Level Agreement ruleset.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div id="ch6">
+    <h2>6. Account & Stakeholder Tables</h2>
+
+    <div class="grid-2col">
+      <div class="card-box">
+        <h4>Table: <code>tabCRM Organization</code></h4>
+        <ul>
+          <li><code>name</code>: Primary key (Company Name / Clean ID).</li>
+          <li><code>organization_name</code>: <code>VARCHAR(140)</code>.</li>
+          <li><code>website</code>: <code>VARCHAR(140)</code>.</li>
+          <li><code>domain</code>: <code>VARCHAR(140)</code> (Indexed for enrichment).</li>
+          <li><code>annual_revenue</code>: <code>DECIMAL(21, 9)</code>.</li>
+          <li><code>no_of_employees</code>: <code>INT(11)</code>.</li>
+          <li><code>industry</code>: FK &rarr; <code>tabCRM Industry</code>.</li>
+          <li><code>territory</code>: FK &rarr; <code>tabCRM Territory</code>.</li>
+        </ul>
+      </div>
+
+      <div class="card-box">
+        <h4>Table: <code>tabContact</code></h4>
+        <ul>
+          <li><code>name</code>: Primary key (Contact UID).</li>
+          <li><code>first_name</code>, <code>last_name</code>: <code>VARCHAR(140)</code>.</li>
+          <li><code>email_id</code>: <code>VARCHAR(140)</code> (Indexed for email sync).</li>
+          <li><code>mobile_no</code>: <code>VARCHAR(140)</code> (Indexed for phone/WhatsApp).</li>
+          <li><code>company_name</code>: Denormalized company string.</li>
+          <li><code>designation</code>: <code>VARCHAR(140)</code> (Job role).</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CHAPTER 7 & 8: CHILD TABLES & ACTIVITIES -->
+<div id="ch7" class="page-break">
+  <h1>7. Child Tables & Line Item Composition</h1>
+  <p>
+    In PC CRM, master-detail relationships (such as product line items on a deal) use <strong>Child Tables</strong>. Child tables do not exist independently; they are bound to a parent document via three structural columns:
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Child Column</th>
+        <th style="width: 25%;">Type</th>
+        <th>Architectural Function</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>parent</code></td>
+        <td><code>VARCHAR(140)</code></td>
+        <td>Foreign Key pointing to the parent document's <code>name</code> (e.g., <code>CRM-DEAL-2026-00001</code>).</td>
+      </tr>
+      <tr>
+        <td><code>parenttype</code></td>
+        <td><code>VARCHAR(140)</code></td>
+        <td>The DocType of the parent (e.g., <code>CRM Deal</code>).</td>
+      </tr>
+      <tr>
+        <td><code>parentfield</code></td>
+        <td><code>VARCHAR(140)</code></td>
+        <td>The specific fieldname in the parent document (e.g., <code>products</code>).</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Schema: <code>tabCRM Products</code> (Deal Line Items)</h3>
+  <pre><code>CREATE TABLE `tabCRM Products` (
+  `name` VARCHAR(140) NOT NULL PRIMARY KEY,
+  `creation` DATETIME(6) NOT NULL,
+  `modified` DATETIME(6) NOT NULL,
+  `modified_by` VARCHAR(140) NOT NULL,
+  `owner` VARCHAR(140) NOT NULL,
+  `docstatus` INT(1) NOT NULL DEFAULT 0,
+  `parent` VARCHAR(140) NOT NULL,
+  `parenttype` VARCHAR(140) NOT NULL,
+  `parentfield` VARCHAR(140) NOT NULL,
+  `idx` INT(8) NOT NULL DEFAULT 0,
+  `product` VARCHAR(140) DEFAULT NULL,
+  `product_name` VARCHAR(140) DEFAULT NULL,
+  `qty` DECIMAL(21, 9) NOT NULL DEFAULT 1.000000000,
+  `rate` DECIMAL(21, 9) NOT NULL DEFAULT 0.000000000,
+  `discount_percentage` DECIMAL(5, 2) NOT NULL DEFAULT 0.00,
+  `amount` DECIMAL(21, 9) NOT NULL DEFAULT 0.000000000,
+  INDEX `parent` (`parent`),
+  INDEX `product` (`product`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;</code></pre>
+
+  <div id="ch8">
+    <h2>8. Activity, Task & Omnichannel Storage</h2>
+    <p>Activities are linked polymorphically to any entity in PC CRM:</p>
+    <ul>
+      <li><strong><code>tabCRM Task</code>:</strong> Stores actionable to-dos with <code>due_date</code>, <code>priority</code> (Low, Medium, High, Urgent), <code>assigned_to</code>, and polymorphic links: <code>reference_doctype</code> and <code>reference_name</code>.</li>
+      <li><strong><code>tabFCRM Note</code>:</strong> Stores rich-text notes in a <code>LONGTEXT</code> column named <code>content</code>, with a <code>pinned</code> (0 or 1) boolean flag for sticky intelligence.</li>
+      <li><strong><code>tabCRM Call Log</code>:</strong> Stores telephony logs (Twilio/Exotel) with <code>from_number</code>, <code>to_number</code>, <code>duration</code>, <code>call_type</code>, <code>status</code>, and <code>recording_url</code>.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- CHAPTER 9 & 10: SLA, TERRITORY, SINGLES -->
+<div id="ch9" class="page-break">
+  <h1>9. Service Level Agreements (SLA) Schema</h1>
+  <p>
+    PC CRM enforces response and resolution deadlines using a multi-tiered relational SLA model:
+  </p>
+
+  <div class="grid-2col">
+    <div class="card-box">
+      <h4>Master: <code>tabCRM Service Level Agreement</code></h4>
+      <ul>
+        <li><code>name</code>: Unique SLA policy name (e.g., Enterprise 24/7).</li>
+        <li><code>default_priority</code>: Standard priority (Medium).</li>
+        <li><code>holiday_list</code>: FK &rarr; <code>tabCRM Holiday List</code>.</li>
+        <li><code>service_days</code>: Child table of working business hours.</li>
+      </ul>
+    </div>
+    <div class="card-box">
+      <h4>Child: <code>tabCRM Service Level Priority</code></h4>
+      <ul>
+        <li><code>parent</code>: Links to master SLA.</li>
+        <li><code>priority</code>: Urgent, High, Medium, Low.</li>
+        <li><code>response_time</code>: Target first touch seconds.</li>
+        <li><code>resolution_time</code>: Target resolution seconds.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="ch10">
+    <h2>10. Territory & Sales Hierarchy Data Structures</h2>
+    <p>
+      PC CRM utilizes nested trees and reporting hierarchies:
+    </p>
+    <ul>
+      <li><strong><code>tabCRM Territory</code>:</strong> Stored as a Modified Preorder Tree Traversal (Nested Set) using <code>lft</code> and <code>rgt</code> integer columns, enabling instantaneous subtree queries (e.g., retrieving all deals in North America and all child states in a single indexed query).</li>
+      <li><strong><code>tabCRM Sales Hierarchy</code>:</strong> Directed adjacency tree mapping sales reps to team leads and regional managers. Fuels manager rollup visibility without recursive join bottlenecks.</li>
+    </ul>
+
+    <div id="ch11">
+      <h2>11. The Single Table Pattern (<code>tabSingles</code>)</h2>
+      <p>
+        System settings documents (such as <code>FCRM Settings</code> or <code>PC CRM Global Settings</code>) do not require full relational tables. Instead, PC CRM stores them in a high-efficiency Key-Value table called <strong><code>tabSingles</code></strong>:
+      </p>
+
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 25%;">Column</th>
+            <th style="width: 25%;">Type</th>
+            <th>Description & Example Data</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>doctype</code></td>
+            <td><code>VARCHAR(140)</code></td>
+            <td>The settings configuration name (e.g. <code>FCRM Settings</code>).</td>
+          </tr>
+          <tr>
+            <td><code>field</code></td>
+            <td><code>VARCHAR(140)</code></td>
+            <td>The setting key (e.g. <code>enable_forecasting</code>, <code>currency</code>).</td>
+          </tr>
+          <tr>
+            <td><code>value</code></td>
+            <td><code>LONGTEXT</code></td>
+            <td>The stored setting value (e.g. <code>1</code>, <code>USD</code>, <code>{"theme":"dark"}</code>).</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- CHAPTER 12, 13, 14: AUDIT, INDEXING, BACKUP -->
+<div id="ch12" class="page-break">
+  <h1>12. Audit Trails, Versions & Change Tracking</h1>
+  <p>
+    PC CRM maintains complete compliance accountability through dedicated audit tables:
+  </p>
+  <ul>
+    <li><strong><code>tabVersion</code>:</strong> Captures a full JSON delta whenever any document is saved. It records <code>ref_doctype</code>, <code>docname</code>, <code>data</code> (showing old vs. new values), <code>owner</code>, and timestamp. This allows 1-click historical rollbacks.</li>
+    <li><strong><code>tabActivity Log</code>:</strong> Logs user sessions, login timestamps, IP addresses, data export events, and bulk actions.</li>
+  </ul>
+
+  <div id="ch13">
+    <h2>13. Indexing Strategies & Query Optimization</h2>
+    <p>
+      For high-scale databases handling millions of leads and deals, PC CRM implements rigorous indexing policies:
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 25%;">Index Type</th>
+          <th style="width: 35%;">Columns Indexed</th>
+          <th>Query Optimization Benefit</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Clustered Primary Key</strong></td>
+          <td><code>PRIMARY KEY (`name`)</code></td>
+          <td>Instant $O(1)$ single-record retrieval for API and detail views.</td>
+        </tr>
+        <tr>
+          <td><strong>Status & Owner Composite</strong></td>
+          <td><code>INDEX (`status`, `deal_owner`)</code></td>
+          <td>Accelerates Kanban pipeline filtering by stage and representative.</td>
+        </tr>
+        <tr>
+          <td><strong>Parent FK Indexes</strong></td>
+          <td><code>INDEX (`parent`, `parenttype`)</code></td>
+          <td>Ensures instant joins when rendering line items on deals and quotes.</td>
+        </tr>
+        <tr>
+          <td><strong>Search Text Indexes</strong></td>
+          <td><code>INDEX (`email_id`), INDEX (`mobile_no`)</code></td>
+          <td>Sub-millisecond lookup during inbound telephony and email matching.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div id="ch14" class="avoid-break">
+    <h2>14. Database Maintenance, Backups & Recovery</h2>
+    <p>PC CRM provides automated MariaDB snapshot utilities:</p>
+
+    <div class="grid-2col">
+      <div class="card-box">
+        <h4>Hot Database Backup Command</h4>
+        <p>Creates a full gzip snapshot with transactional consistency:</p>
+        <pre><code># Snapshot database + files
+bench --site crm.localhost backup --with-files</code></pre>
+        <p>Generates an SQL dump in <code>sites/crm.localhost/private/backups/</code>.</p>
+      </div>
+
+      <div class="card-box">
+        <h4>Database Restore Command</h4>
+        <p>Restores database from an existing SQL backup file:</p>
+        <pre><code># Restore into site
+bench --site crm.localhost restore \
+  /path/to/backup.sql.gz</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div style="border-top: 1px solid #e2e8f0; margin-top: 25px; padding-top: 12px; text-align: center; font-size: 8.5pt; color: #64748b;">
+    &mdash; PC CRM Database Architecture Manual &bull; Confidential & Proprietary &bull; 2026 Edition &mdash;
+  </div>
+</div>
+
+</body>
+</html>

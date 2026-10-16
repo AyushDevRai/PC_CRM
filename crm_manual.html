@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Frappe CRM & Desk — Complete Operations & Customization Manual</title>
+<style>
+  @page {
+    size: A4;
+    margin: 18mm 16mm 20mm 16mm;
+    @bottom-right {
+      content: counter(page);
+    }
+  }
+
+  *, *:before, *:after {
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #1e293b;
+    background: #ffffff;
+    line-height: 1.6;
+    font-size: 10.5pt;
+    margin: 0;
+    padding: 0;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Typography */
+  h1, h2, h3, h4, h5 {
+    color: #0f172a;
+    font-weight: 700;
+    margin-top: 1.4em;
+    margin-bottom: 0.5em;
+    page-break-after: avoid;
+  }
+
+  h1 {
+    font-size: 22pt;
+    border-bottom: 2.5px solid #4f46e5;
+    padding-bottom: 6px;
+    margin-top: 0;
+  }
+
+  h2 {
+    font-size: 15pt;
+    border-bottom: 1.5px solid #e2e8f0;
+    padding-bottom: 4px;
+    margin-top: 1.6em;
+    color: #312e81;
+  }
+
+  h3 {
+    font-size: 12pt;
+    color: #1e1b4b;
+    margin-top: 1.2em;
+  }
+
+  h4 {
+    font-size: 11pt;
+    color: #334155;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 1em;
+  }
+
+  p {
+    margin-top: 0.4em;
+    margin-bottom: 0.8em;
+  }
+
+  ul, ol {
+    margin-top: 0.3em;
+    margin-bottom: 0.8em;
+    padding-left: 24px;
+  }
+
+  li {
+    margin-bottom: 0.35em;
+  }
+
+  /* Page Break Utilities */
+  .page-break {
+    page-break-before: always;
+  }
+
+  .avoid-break {
+    page-break-inside: avoid;
+  }
+
+  /* Cover Page */
+  .cover {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 50px 30px 30px 30px;
+    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%);
+    color: #ffffff;
+    border-radius: 8px;
+    page-break-after: always;
+  }
+
+  .cover-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    padding-bottom: 20px;
+  }
+
+  .cover-badge {
+    background: #4f46e5;
+    color: #ffffff;
+    font-size: 9pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    display: inline-block;
+  }
+
+  .cover-system-tag {
+    font-size: 10pt;
+    color: #cbd5e1;
+    font-weight: 500;
+  }
+
+  .cover-main {
+    margin-top: 60px;
+    margin-bottom: 60px;
+  }
+
+  .cover-main h1 {
+    font-size: 32pt;
+    color: #ffffff;
+    border-bottom: none;
+    line-height: 1.15;
+    margin-bottom: 18px;
+    font-weight: 800;
+  }
+
+  .cover-subtitle {
+    font-size: 14pt;
+    color: #cbd5e1;
+    line-height: 1.5;
+    max-width: 650px;
+    margin-bottom: 30px;
+  }
+
+  .cover-pills {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 25px;
+  }
+
+  .pill {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 9.5pt;
+    color: #e2e8f0;
+    font-weight: 500;
+  }
+
+  .cover-footer {
+    border-top: 1px solid rgba(255,255,255,0.2);
+    padding-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 9.5pt;
+    color: #94a3b8;
+  }
+
+  /* Table of Contents */
+  .toc {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .toc-title {
+    font-size: 16pt;
+    font-weight: 700;
+    color: #1e293b;
+    border-bottom: 2px solid #cbd5e1;
+    padding-bottom: 8px;
+    margin-top: 0;
+    margin-bottom: 16px;
+  }
+
+  .toc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 24px;
+  }
+
+  .toc-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10pt;
+    padding: 4px 0;
+    border-bottom: 1px dashed #e2e8f0;
+  }
+
+  .toc-item a {
+    color: #334155;
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .toc-item span {
+    color: #6366f1;
+    font-weight: 600;
+  }
+
+  /* Callout Boxes */
+  .callout {
+    padding: 14px 18px;
+    border-radius: 6px;
+    margin: 16px 0;
+    border-left: 4px solid #6366f1;
+    background: #f8fafc;
+    font-size: 10pt;
+    page-break-inside: avoid;
+  }
+
+  .callout-title {
+    font-weight: 700;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .callout-tip {
+    border-left-color: #10b981;
+    background: #f0fdf4;
+    color: #065f46;
+  }
+  .callout-tip .callout-title { color: #047857; }
+
+  .callout-tweak {
+    border-left-color: #8b5cf6;
+    background: #f5f3ff;
+    color: #4c1d95;
+  }
+  .callout-tweak .callout-title { color: #6d28d9; }
+
+  .callout-warning {
+    border-left-color: #f59e0b;
+    background: #fffbeb;
+    color: #92400e;
+  }
+  .callout-warning .callout-title { color: #b45309; }
+
+  .callout-info {
+    border-left-color: #3b82f6;
+    background: #eff6ff;
+    color: #1e40af;
+  }
+  .callout-info .callout-title { color: #1d4ed8; }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0;
+    font-size: 9.5pt;
+    page-break-inside: avoid;
+  }
+
+  th {
+    background: #f1f5f9;
+    color: #0f172a;
+    font-weight: 600;
+    text-align: left;
+    padding: 8px 12px;
+    border: 1px solid #cbd5e1;
+  }
+
+  td {
+    padding: 7px 12px;
+    border: 1px solid #e2e8f0;
+    vertical-align: top;
+  }
+
+  tr:nth-child(even) td {
+    background: #f8fafc;
+  }
+
+  /* Process Cards / Flow Diagram */
+  .flow-container {
+    display: flex;
+    gap: 10px;
+    margin: 16px 0;
+    page-break-inside: avoid;
+  }
+
+  .flow-step {
+    flex: 1;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-top: 3px solid #4f46e5;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 9pt;
+  }
+
+  .flow-step-number {
+    font-weight: 700;
+    color: #4f46e5;
+    margin-bottom: 2px;
+    font-size: 8.5pt;
+    text-transform: uppercase;
+  }
+
+  .flow-step-title {
+    font-weight: 600;
+    color: #0f172a;
+    margin-bottom: 4px;
+    font-size: 9.5pt;
+  }
+
+  /* Code & Syntax */
+  code {
+    background: #f1f5f9;
+    color: #0f172a;
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 9pt;
+  }
+
+  pre {
+    background: #0f172a;
+    color: #f8fafc;
+    padding: 12px 16px;
+    border-radius: 6px;
+    overflow-x: auto;
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 8.5pt;
+    line-height: 1.45;
+    page-break-inside: avoid;
+    margin: 12px 0;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-size: 8pt;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .badge-blue { background: #dbeafe; color: #1e40af; }
+  .badge-green { background: #dcfce7; color: #166534; }
+  .badge-amber { background: #fef3c7; color: #92400e; }
+  .badge-purple { background: #f3e8ff; color: #6b21a8; }
+  .badge-slate { background: #f1f5f9; color: #334155; }
+
+  /* Keyboard shortcut tag */
+  kbd {
+    display: inline-block;
+    padding: 2px 6px;
+    font-size: 8pt;
+    font-family: inherit;
+    line-height: 1;
+    color: #1e293b;
+    background-color: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.2);
+  }
+
+  .section-intro {
+    font-size: 11pt;
+    color: #475569;
+    font-weight: 400;
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+
+  .grid-2col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 12px 0;
+    page-break-inside: avoid;
+  }
+
+  .card-box {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 12px 14px;
+  }
+
+  .card-box h4 {
+    margin-top: 0;
+    color: #1e293b;
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 4px;
+  }
+
+  .header-rule {
+    height: 1px;
+    background: #e2e8f0;
+    margin: 20px 0;
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER PAGE -->
+<div class="cover">
+  <div class="cover-header">
+    <div class="cover-badge">Official System Guidebook</div>
+    <div class="cover-system-tag">Frappe CRM & Desk Architecture</div>
+  </div>
+
+  <div class="cover-main">
+    <h1>The Ultimate CRM & Desk Operations Manual</h1>
+    <div class="cover-subtitle">
+      A comprehensive, end-user field manual for mastering sales pipelines, omnichannel communication, SLA management, back-office administration, and no-code customizations.
+    </div>
+
+    <div class="cover-pills">
+      <div class="pill">Lead & Deal Pipelines</div>
+      <div class="pill">Omnichannel Communication</div>
+      <div class="pill">SLA & Response Enforcement</div>
+      <div class="pill">Territory & Hierarchy Routing</div>
+      <div class="pill">Frappe Desk Operations</div>
+      <div class="pill">Form Layout & Field Customization</div>
+      <div class="pill">Low-Code Form Scripting</div>
+    </div>
+  </div>
+
+  <div class="cover-footer">
+    <div>Frappe CRM + Desk Platform &bull; Version 2026 Edition</div>
+    <div>Target Audience: Sales Executives, Team Leads, CRM Admins & Operations</div>
+  </div>
+</div>
+
+<!-- TABLE OF CONTENTS -->
+<div class="toc page-break">
+  <div class="toc-title">Table of Contents & Quick Navigation</div>
+  <div class="toc-grid">
+    <div class="toc-item"><span>01</span><a href="#ch1">Dual-Engine Architecture: CRM vs. Desk</a></div>
+    <div class="toc-item"><span>02</span><a href="#ch2">Navigation, Workspace & Command Palette</a></div>
+    <div class="toc-item"><span>03</span><a href="#ch3">Lead Management: Inbound to Conversion</a></div>
+    <div class="toc-item"><span>04</span><a href="#ch4">Deal Pipelines & Visual Kanban Board</a></div>
+    <div class="toc-item"><span>05</span><a href="#ch5">Accounts & People (Organizations & Contacts)</a></div>
+    <div class="toc-item"><span>06</span><a href="#ch6">Omnichannel Hub: Email, WhatsApp & Calls</a></div>
+    <div class="toc-item"><span>07</span><a href="#ch7">Activities, Notes, Tasks & Collaboration</a></div>
+    <div class="toc-item"><span>08</span><a href="#ch8">Service Level Agreements (SLAs) & Timing</a></div>
+    <div class="toc-item"><span>09</span><a href="#ch9">Sales Hierarchy, Territories & Routing Rules</a></div>
+    <div class="toc-item"><span>10</span><a href="#ch10">Views, Filters, Grouping & Dashboards</a></div>
+    <div class="toc-item"><span>11</span><a href="#ch11">The Frappe Desk Engine (Back-Office Hub)</a></div>
+    <div class="toc-item"><span>12</span><a href="#ch12">Data Management: Import, Export & Audits</a></div>
+    <div class="toc-item"><span>13</span><a href="#ch13">How to Tweak Things: Field Layout Editor</a></div>
+    <div class="toc-item"><span>14</span><a href="#ch14">How to Tweak Things: Custom Fields in Desk</a></div>
+    <div class="toc-item"><span>15</span><a href="#ch15">How to Tweak Things: Statuses & Pipelines</a></div>
+    <div class="toc-item"><span>16</span><a href="#ch16">How to Tweak Things: Notifications & Rules</a></div>
+    <div class="toc-item"><span>17</span><a href="#ch17">How to Tweak Things: Workflows & Approvals</a></div>
+    <div class="toc-item"><span>18</span><a href="#ch18">How to Tweak Things: Low-Code Form Scripts</a></div>
+    <div class="toc-item"><span>19</span><a href="#ch19">Security, Roles & User Access Permissions</a></div>
+    <div class="toc-item"><span>20</span><a href="#ch20">Daily Playbooks & Troubleshooting FAQ</a></div>
+  </div>
+</div>
+
+<!-- CHAPTER 1 & 2 -->
+<div id="ch1">
+  <h1>1. The Dual-Engine Architecture: CRM vs. Desk</h1>
+  <p class="section-intro">
+    To use this system effectively, the single most important concept to grasp is that you have <strong>two complementary interfaces</strong> working on the same underlying database: the sleek modern <strong>CRM Frontend</strong> and the robust <strong>Frappe Desk</strong>.
+  </p>
+
+  <div class="grid-2col">
+    <div class="card-box" style="border-top: 3px solid #4f46e5;">
+      <h4>The Modern CRM Frontend (<code>/crm</code>)</h4>
+      <p><strong>Designed for:</strong> Daily sales reps, account executives, and sales managers.</p>
+      <ul>
+        <li>Lightning-fast single page application.</li>
+        <li>Visual Kanban pipelines with drag-and-drop.</li>
+        <li>Integrated communication: 1-click Email, WhatsApp, and Telephony.</li>
+        <li>Clean, clutter-free record views and activity feeds.</li>
+        <li>Real-time SLA timers and quick conversion workflows.</li>
+      </ul>
+      <p><span class="badge badge-blue">URL Route:</span> <code>https://your-crm-domain/crm</code></p>
+    </div>
+
+    <div class="card-box" style="border-top: 3px solid #059669;">
+      <h4>The Frappe Desk Engine (<code>/app</code>)</h4>
+      <p><strong>Designed for:</strong> Administrators, operations, finance, and power users.</p>
+      <ul>
+        <li>The comprehensive back-office operational dashboard.</li>
+        <li>Deep system configuration, form customization, and new fields.</li>
+        <li>Granular permissions manager (by role, territory, or user).</li>
+        <li>Advanced reporting, SQL-like query builder, and scheduled jobs.</li>
+        <li>Data import/export wizards, audit trails, and version rollback.</li>
+      </ul>
+      <p><span class="badge badge-green">URL Route:</span> <code>https://your-crm-domain/app</code></p>
+    </div>
+  </div>
+
+  <div class="callout callout-tip">
+    <div class="callout-title">When should you use which?</div>
+    <strong>Rule of thumb:</strong> If you are talking to a prospect, updating deal stages, logging calls, sending emails, or managing your daily tasks, stay in the <strong>CRM Frontend</strong>. If you need to add custom fields, change permissions, inspect audit logs, build custom reports, or import 10,000 leads, switch to <strong>Desk</strong>.
+  </div>
+</div>
+
+<div id="ch2" class="avoid-break">
+  <h2>2. Navigating the CRM Interface</h2>
+  <p>The modern CRM interface is crafted for speed and minimal clicks. Here are the core navigation elements:</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 28%;">Element</th>
+        <th style="width: 35%;">Location & Interaction</th>
+        <th>Purpose & Daily Use</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Left Navigation Sidebar</strong></td>
+        <td>Collapsible menu on the left side of the screen</td>
+        <td>Instant switching between Leads, Deals, Contacts, Organizations, Notes, Tasks, Call Logs, and CRM Settings.</td>
+      </tr>
+      <tr>
+        <td><strong>Command Palette</strong></td>
+        <td>Press <kbd>Ctrl</kbd> + <kbd>K</kbd> (or <kbd>Cmd</kbd> + <kbd>K</kbd>) anywhere</td>
+        <td>Super-fast keyboard launcher. Jump instantly to any record, create a new Lead/Deal, or trigger system actions without touching your mouse.</td>
+      </tr>
+      <tr>
+        <td><strong>Global Notifications</strong></td>
+        <td>Bell icon in top-right header</td>
+        <td>Displays alerts when you are @mentioned in comments, assigned new leads, or when an SLA deadline is approaching.</td>
+      </tr>
+      <tr>
+        <td><strong>Theme Switcher</strong></td>
+        <td>User Profile Avatar &rarr; Theme</td>
+        <td>Toggle between <em>Light</em>, <em>Dark</em>, or <em>System</em> appearance for comfortable viewing in any lighting condition.</td>
+      </tr>
+      <tr>
+        <td><strong>Quick Add Button</strong></td>
+        <td>Top-right <code>+ New</code> action button</td>
+        <td>Instant pop-up to quickly capture a new Lead, Deal, Contact, or Task from whatever screen you are currently on.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- CHAPTER 3: LEAD MANAGEMENT -->
+<div id="ch3" class="page-break">
+  <h1>3. Lead Management: Inbound to Conversion</h1>
+  <p class="section-intro">
+    A <strong>Lead</strong> represents any prospective individual or company that has expressed interest in your product or service but has not yet been qualified as an active buying opportunity.
+  </p>
+
+  <div class="flow-container">
+    <div class="flow-step">
+      <div class="flow-step-number">Phase 1</div>
+      <div class="flow-step-title">Inbound Capture</div>
+      Web forms, Meta ads, imports, or manual entry. Auto-assigned to reps.
+    </div>
+    <div class="flow-step">
+      <div class="flow-step-number">Phase 2</div>
+      <div class="flow-step-title">Domain Enrichment</div>
+      System retrieves company website, logo, company size & social profiles.
+    </div>
+    <div class="flow-step">
+      <div class="flow-step-number">Phase 3</div>
+      <div class="flow-step-title">First Touch (SLA)</div>
+      Rep reaches out via integrated Email, WhatsApp, or Phone Call.
+    </div>
+    <div class="flow-step">
+      <div class="flow-step-number">Phase 4</div>
+      <div class="flow-step-title">Qualification</div>
+      Confirm budget, authority, need, and timeline (BANT).
+    </div>
+    <div class="flow-step">
+      <div class="flow-step-number">Phase 5</div>
+      <div class="flow-step-title">1-Click Convert</div>
+      Converts to Contact, Organization, and opens a qualified Deal.
+    </div>
+  </div>
+
+  <h3>Step-by-Step: Capturing & Managing Leads</h3>
+  <ol>
+    <li><strong>Manual Capture:</strong> Click <code>+ New Lead</code> from the top bar or inside the Leads page. Enter the lead's full name, email address, phone number, company name, and source.</li>
+    <li><strong>Automated Capture:</strong> Inbound leads can flow automatically from:
+      <ul>
+        <li><strong>Website Contact Forms:</strong> Via CRM Webhook API integration.</li>
+        <li><strong>Facebook / Meta Lead Ads:</strong> Connected via Lead Syncing settings.</li>
+        <li><strong>CSV / Excel Bulk Import:</strong> Navigate to <code>Data Import</code> to upload bulk lists with automatic column mapping.</li>
+      </ul>
+    </li>
+    <li><strong>Domain & Profile Enrichment:</strong> When you enter a website URL (e.g. <code>acme.com</code>), the CRM auto-fetches the company logo, location, employee count, and company summary, saving your reps minutes of manual research per lead.</li>
+  </ol>
+
+  <h3>The Lead Detail Screen Anatomy</h3>
+  <div class="grid-2col">
+    <div class="card-box">
+      <h4>Left & Center Panels (Data & Timeline)</h4>
+      <ul>
+        <li><strong>Header Details:</strong> Lead status badge, owner avatar, SLA response countdown timer.</li>
+        <li><strong>Fields Section:</strong> Contact info, job title, industry, territory, notes.</li>
+        <li><strong>Activity Timeline:</strong> Chronological log of emails sent, WhatsApp messages, call recordings, status changes, and internal notes.</li>
+      </ul>
+    </div>
+    <div class="card-box">
+      <h4>Right Panel (Quick Actions & Status)</h4>
+      <ul>
+        <li><strong>Action Bar:</strong> Instant buttons to <em>Send Email</em>, <em>Send WhatsApp</em>, <em>Log Call</em>, or <em>Create Task</em>.</li>
+        <li><strong>Status Selector:</strong> Move between <em>New</em> &rarr; <em>Contacted</em> &rarr; <em>Interested</em> &rarr; <em>Qualified</em>.</li>
+        <li><strong>Conversion Trigger:</strong> The primary <code>Convert to Deal</code> button.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout callout-info">
+    <div class="callout-title">The 1-Click Conversion Workflow</div>
+    When a lead is qualified, click <strong>Convert</strong>. The system automatically creates:
+    <ol style="margin-bottom: 0;">
+      <li>A permanent <strong>Contact</strong> record for the person.</li>
+      <li>An <strong>Organization</strong> record for the company.</li>
+      <li>An active <strong>Deal</strong> placed into your sales pipeline at your chosen starting stage.</li>
+    </ol>
+    All previous notes, emails, and activity history are seamlessly migrated to the new Deal!
+  </div>
+</div>
+
+<!-- CHAPTER 4: DEAL MANAGEMENT -->
+<div id="ch4" class="page-break">
+  <h1>4. Deal Pipelines & Visual Kanban Board</h1>
+  <p class="section-intro">
+    A <strong>Deal</strong> is a qualified commercial opportunity with an assigned monetary value, expected close date, and defined sales stages that move through your pipeline.
+  </p>
+
+  <h3>The Visual Kanban Pipeline Board</h3>
+  <p>The Deals page provides a comprehensive bird's-eye view of your entire sales revenue:</p>
+  <ul>
+    <li><strong>Stage Columns:</strong> Each column represents a distinct phase of your sales cycle (e.g., <em>Prospecting &rarr; Discovery &rarr; Proposal Sent &rarr; Negotiation &rarr; Closed Won / Lost</em>).</li>
+    <li><strong>Column Headers:</strong> Display the total number of deals in that stage and the cumulative pipeline dollar value.</li>
+    <li><strong>Drag-and-Drop:</strong> Simply grab a deal card and drag it across columns to instantly update its stage and trigger stage-specific workflows.</li>
+    <li><strong>Color-Coded Health Indicators:</strong> Visual badges immediately flag overdue closing dates or neglected deals needing urgent attention.</li>
+  </ul>
+
+  <h3>Deal Details Anatomy</h3>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Field / Property</th>
+        <th style="width: 35%;">How it Works</th>
+        <th>Sales Impact & Best Practice</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Deal Value & Currency</strong></td>
+        <td>Numeric monetary value and currency picker (USD, EUR, INR, GBP, etc.)</td>
+        <td>Drives pipeline forecasting. Multi-currency exchange rates can auto-convert values for global reporting.</td>
+      </tr>
+      <tr>
+        <td><strong>Win Probability (%)</strong></td>
+        <td>Percentage (0% to 100%) typically mapped to stages (e.g., Proposal = 60%)</td>
+        <td>Multiplies Deal Value by Probability to generate your <em>Weighted Forecast Value</em>.</td>
+      </tr>
+      <tr>
+        <td><strong>Expected Close Date</strong></td>
+        <td>Target calendar date for signing the contract</td>
+        <td>Enables revenue forecasting cohorts (e.g., Expected Deals closing in Q3).</td>
+      </tr>
+      <tr>
+        <td><strong>Products & Line Items</strong></td>
+        <td>Child table of items, quantities, standard rates, and applied discounts</td>
+        <td>Calculates itemized totals and seamlessly syncs to Quotes/Sales Orders in ERPNext.</td>
+      </tr>
+      <tr>
+        <td><strong>Deal Owner</strong></td>
+        <td>Assigned sales representative</td>
+        <td>Determines quota attribution, hierarchy visibility, and notification routing.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Closing Deals: Won vs. Lost Intelligence</h3>
+  <div class="grid-2col">
+    <div class="card-box" style="border-top: 3px solid #10b981;">
+      <h4>Marking as Won</h4>
+      <p>When the contract is signed, click <code>Mark as Won</code>.</p>
+      <ul>
+        <li>Triggers celebration feedback in the UI.</li>
+        <li>Locks the deal value and marks probability at 100%.</li>
+        <li>Can automatically trigger ERPNext customer creation and invoice generation.</li>
+      </ul>
+    </div>
+    <div class="card-box" style="border-top: 3px solid #ef4444;">
+      <h4>Marking as Lost</h4>
+      <p>If a prospect declines, click <code>Mark as Lost</code>.</p>
+      <ul>
+        <li><strong>Mandatory Lost Reason:</strong> Prompt requires selecting a reason (e.g. <em>Price, Competitor, Feature Gap, Budget Cut</em>).</li>
+        <li><strong>Competitor Notes:</strong> Record which rival was selected.</li>
+        <li>Provides executive analytics on why deals fail to refine pricing and product roadmaps.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- CHAPTER 5 & 6: ACCOUNTS, CONTACTS, COMMUNICATIONS -->
+<div id="ch5" class="page-break">
+  <h1>5. Accounts & People (Organizations & Contacts)</h1>
+  <p class="section-intro">
+    In B2B sales, purchasing decisions are made by groups of individuals within an organization. The CRM cleanly separates the company entity from the individual stakeholders.
+  </p>
+
+  <div class="grid-2col">
+    <div class="card-box">
+      <h4>Organizations (The Company Profile)</h4>
+      <p>The centralized hub for company-level data:</p>
+      <ul>
+        <li>Company website, domain, industry classification, employee count, and annual revenue.</li>
+        <li>Billing and shipping physical addresses.</li>
+        <li>Roll-up view: See all Contacts working at this firm, all open/past Deals, and all combined communications in one tab.</li>
+      </ul>
+    </div>
+    <div class="card-box">
+      <h4>Contacts (The People)</h4>
+      <p>Individual decision makers and influencers:</p>
+      <ul>
+        <li>Job title / designation, direct email, mobile phone, and WhatsApp numbers.</li>
+        <li>LinkedIn profile and social handles.</li>
+        <li>Buying Role: Tag stakeholders as <em>Decision Maker</em>, <em>Champion</em>, <em>Influencer</em>, or <em>Billing Contact</em>.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="ch6">
+    <h2>6. The Omnichannel Communication Hub</h2>
+    <p>Never leave your CRM to communicate with prospects. All channels are built directly into the record views.</p>
+
+    <h3>1. Integrated Email Engine (IMAP / SMTP / OAuth)</h3>
+    <ul>
+      <li><strong>Inbox Connection:</strong> Connect your personal work email (Google Workspace, Microsoft Office 365, or standard IMAP/SMTP) or shared corporate inboxes (e.g., <code>sales@company.com</code>).</li>
+      <li><strong>In-CRM Composing:</strong> Send rich-text emails, attach files, CC team members, and preview message formatting directly from the Lead or Deal timeline.</li>
+      <li><strong>Email Templates:</strong> Use dynamic pre-built templates with merge tags like <code>{{ doc.lead_name }}</code> or <code>{{ doc.organization }}</code> for 1-click personalized outreach.</li>
+      <li><strong>Two-Way Thread Sync:</strong> When the prospect replies, their response automatically appears in the CRM activity feed, notifying the deal owner in real-time.</li>
+    </ul>
+
+    <h3>2. WhatsApp Business Integration</h3>
+    <ul>
+      <li><strong>Pre-Approved Templates:</strong> Send official WhatsApp Business template notifications for meeting confirmations, quotation alerts, and urgent updates.</li>
+      <li><strong>Direct Conversation:</strong> Message prospects directly on WhatsApp with full conversation history logged inside the lead timeline.</li>
+    </ul>
+
+    <h3>3. Telephony & Click-to-Call (Twilio & Exotel)</h3>
+    <ul>
+      <li><strong>1-Click Dialing:</strong> Click any phone number next to a contact to instantly dial through Twilio or Exotel.</li>
+      <li><strong>Call Logs:</strong> Automatic logging of call start time, duration, status (Answered, Busy, Missed), and recording playback links.</li>
+      <li><strong>Call Disposition Notes:</strong> A post-call drawer prompts the rep to type call minutes and next steps before moving on.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- CHAPTER 7 & 8: ACTIVITIES & SLA -->
+<div id="ch7" class="page-break">
+  <h1>7. Activities, Tasks, Notes & Internal Collaboration</h1>
+  <p class="section-intro">
+    Deals are won on disciplined follow-through. The CRM provides unified tools to organize your daily work and coordinate with teammates.
+  </p>
+
+  <div class="grid-2col">
+    <div class="card-box">
+      <h4>Notes (Rich-Text Knowledge Hub)</h4>
+      <ul>
+        <li>Rich text editor with headings, bullet points, checklists, and code snippets.</li>
+        <li>Capture meeting minutes, client background intelligence, or strategy briefs.</li>
+        <li><strong>Pin to Top:</strong> Pin mission-critical notes so any team member opening the deal sees them instantly.</li>
+      </ul>
+    </div>
+    <div class="card-box">
+      <h4>Tasks (Actionable To-Dos)</h4>
+      <ul>
+        <li>Assign tasks with due dates, priority levels (Low, Medium, High, Urgent), and status checkboxes.</li>
+        <li>Assign to yourself or delegate to other team members.</li>
+        <li>Automatic reminder notifications in the CRM header before tasks become overdue.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout callout-tip">
+    <div class="callout-title">Internal Collaboration with @Mentions</div>
+    Need help from a solutions engineer, manager, or legal? Type <code>@username</code> in the comment box on any Lead or Deal. The mentioned user receives an instant notification, can view the deal record, and reply directly within the timeline without messy internal email chains!
+  </div>
+
+  <div id="ch8">
+    <h2>8. Service Level Agreements (SLAs) & Timing</h2>
+    <p>
+      In modern sales, speed to contact is critical. Leads contacted within 5 minutes are <strong>21x more likely</strong> to qualify than those contacted after 30 minutes. The CRM enforces this through automated SLAs.
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 25%;">SLA Component</th>
+          <th style="width: 40%;">Configuration & Behavior</th>
+          <th>Visual Status in CRM</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>First Response SLA</strong></td>
+          <td>Countdown timer tracking time from Lead creation until the first outbound email, call, or message is logged by a rep.</td>
+          <td><span class="badge badge-green">Safe</span> &bull; <span class="badge badge-amber">Nearing Breach</span> &bull; <span class="badge badge-purple">Breached</span> pill on card</td>
+        </tr>
+        <tr>
+          <td><strong>Resolution SLA</strong></td>
+          <td>Maximum allowed time to qualify a lead or progress a deal to the next phase.</td>
+          <td>Visual SLA countdown timer displayed in the record header bar.</td>
+        </tr>
+        <tr>
+          <td><strong>Service Days & Hours</strong></td>
+          <td>Defines company operating hours (e.g., Mon–Fri, 9:00 AM – 6:00 PM). Countdown timers pause automatically overnight.</td>
+          <td>Timers accurately reflect business working hours only.</td>
+        </tr>
+        <tr>
+          <td><strong>Holiday Lists</strong></td>
+          <td>Linked holiday calendar. SLA clocks freeze during official company and public holidays.</td>
+          <td>Prevents false breach notifications over long weekends.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- CHAPTER 9 & 10: ROUTING, VIEWS, DASHBOARDS -->
+<div id="ch9" class="page-break">
+  <h1>9. Sales Hierarchy, Territories & Lead Routing</h1>
+  <p class="section-intro">
+    As sales teams grow, assigning leads fairly and maintaining proper managerial visibility is paramount.
+  </p>
+
+  <div class="grid-2col">
+    <div class="card-box">
+      <h4>Sales Hierarchy Tree</h4>
+      <ul>
+        <li>Define managerial reporting lines (e.g., Sales Rep &rarr; Team Lead &rarr; Regional Director &rarr; VP Sales).</li>
+        <li><strong>Hierarchy Permissions:</strong> When enabled in settings, managers automatically gain visibility into all leads, deals, and activities owned by their direct and indirect reports, while individual reps remain focused strictly on their own assigned records.</li>
+      </ul>
+    </div>
+    <div class="card-box">
+      <h4>Territory Management</h4>
+      <ul>
+        <li>Structure your markets by geography (e.g., North America, EMEA, APAC) or customer segment (Enterprise, SMB).</li>
+        <li>Assign sales representatives and managers to specific territories.</li>
+        <li>Filter reports and performance metrics by territory performance.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Automated Lead Assignment Rules</h3>
+  <p>Instead of manually delegating incoming leads every morning, configure automated rules:</p>
+  <ul>
+    <li><strong>Round-Robin Distribution:</strong> Automatically loops through available sales reps in a team, giving each rep an equal share of new inbound prospects.</li>
+    <li><strong>Load Balancing:</strong> Distributes leads based on current rep capacity (assigns leads to reps with the fewest open deals).</li>
+    <li><strong>Rule-Based Conditional Routing:</strong> Routes leads based on field data (e.g., if Country = 'Germany', assign to EMEA Team; if Employee Count > 500, assign to Enterprise AE).</li>
+  </ul>
+
+  <div id="ch10">
+    <h2>10. Views, Filters, Grouping & Dashboards</h2>
+    <p>Every rep and manager works differently. The CRM allows you to slice, filter, and display data exactly how you need it.</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 20%;">Feature</th>
+          <th style="width: 45%;">How to Use It</th>
+          <th>Power User Benefit</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>View Switcher</strong></td>
+          <td>Toggle between <em>List View</em>, <em>Kanban Board</em>, and <em>Group By</em> view using the top controls.</td>
+          <td>Switch from visual pipeline dragging to high-density tabular data with 1 click.</td>
+        </tr>
+        <tr>
+          <td><strong>Filter Builder</strong></td>
+          <td>Click <em>Filter</em> &rarr; Add rules (e.g. <code>Status = 'In Progress' AND Value &gt; 5000</code>). Supports multi-condition logic.</td>
+          <td>Zero in on high-priority targets without visual clutter.</td>
+        </tr>
+        <tr>
+          <td><strong>Column Settings</strong></td>
+          <td>Click the column settings icon on any list view. Check/uncheck fields and reorder columns.</td>
+          <td>Personalize your table to show only fields relevant to your workflow.</td>
+        </tr>
+        <tr>
+          <td><strong>Saved Custom Views</strong></td>
+          <td>Apply filters &rarr; Click <em>Save View</em> &rarr; Name it (e.g. "My Hot Deals Closing This Month").</td>
+          <td>Instant 1-click access from the sidebar. Can be saved as Private or Shared with the team.</td>
+        </tr>
+        <tr>
+          <td><strong>CRM Dashboard</strong></td>
+          <td>Navigate to <code>/crm/dashboard</code>.</td>
+          <td>Real-time charts: Pipeline Funnel, Total Value Won, Win Rate %, Rep Leaderboard, and Activity counts.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- CHAPTER 11 & 12: FRAPPE DESK & DATA -->
+<div id="ch11" class="page-break">
+  <h1>11. The Frappe Desk Engine (Back-Office Hub)</h1>
+  <p class="section-intro">
+    Frappe Desk is the full-featured administrative backbone of your system. Accessible at <code>/app</code>, it provides enterprise-grade control over data, security, reports, and system configuration.
+  </p>
+
+  <h3>Key Features of Frappe Desk</h3>
+  <div class="grid-2col">
+    <div class="card-box">
+      <h4>The Awesomebar (<kbd>Ctrl</kbd> + <kbd>G</kbd>)</h4>
+      <p>The universal search engine at the top of Desk. Start typing to instantly open:</p>
+      <ul>
+        <li>Any record name (e.g. "Acme Corp" or "LEAD-00124").</li>
+        <li>Any DocType list (e.g. "Lead List", "Deal Status List").</li>
+        <li>Reports, settings pages, and system tools.</li>
+      </ul>
+    </div>
+    <div class="card-box">
+      <h4>Advanced Desk Views</h4>
+      <ul>
+        <li><strong>Report View:</strong> Tabular spreadsheet view with custom SQL-style column pickers, aggregations (Sum, Average, Count), and instant export.</li>
+        <li><strong>Calendar View:</strong> View follow-up tasks, calls, and closing dates on monthly/weekly calendars.</li>
+        <li><strong>Gantt View:</strong> Project and task timeline dependencies.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="ch12">
+    <h2>12. Data Management: Import, Export & Audits</h2>
+
+    <h3>1. Bulk Data Import Wizard</h3>
+    <ol>
+      <li>In Desk, type <strong>Data Import</strong> in the Awesomebar &rarr; Click <code>+ Add Data Import</code>.</li>
+      <li>Select the DocType (e.g. <code>CRM Lead</code> or <code>CRM Organization</code>).</li>
+      <li>Click <strong>Download Template</strong> (choose CSV or Excel). The template includes all standard and custom fields with clear sample headers.</li>
+      <li>Paste your customer data into the spreadsheet and upload the file.</li>
+      <li>Preview column mapping, click <strong>Start Import</strong>. The system provides real-time progress and a detailed error log if any invalid emails or missing mandatory fields are detected.</li>
+    </ol>
+
+    <h3>2. Exporting Data</h3>
+    <p>From any List or Report view in Desk, click <strong>Menu (&bull;&bull;&bull;) &rarr; Export</strong>. Select whether you want all records or filtered records, choose your desired columns, and download immediately as Excel or CSV.</p>
+
+    <h3>3. Audit Trail & Version History</h3>
+    <p>Every single record in the system has a complete, tamper-proof audit trail. At the bottom of any document in Desk:</p>
+    <ul>
+      <li>See who created the record, every field that was modified, the exact timestamp, and the user who made the change.</li>
+      <li><strong>Rollback Feature:</strong> View historical snapshots and restore previous values with one click if a mistake was made.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- CHAPTER 13 & 14: TWEAKING FORMS & FIELDS -->
+<div id="ch13" class="page-break">
+  <h1>13. How to Tweak Things: Field Layout Editor</h1>
+  <p class="section-intro">
+    You do not need to call a programmer to adjust your CRM forms. The system includes visual layout editors right inside the CRM frontend.
+  </p>
+
+  <h3>Using the CRM Field Layout Editor</h3>
+  <ol>
+    <li>Open any Lead, Deal, Contact, or Organization detail page.</li>
+    <li>Click the <strong>Layout Settings</strong> icon (or select <em>Edit Layout</em> from the record action menu).</li>
+    <li><strong>Visual Drag-and-Drop:</strong>
+      <ul>
+        <li>Drag any field up or down to change its display order.</li>
+        <li>Move fields between columns or into new sections.</li>
+      </ul>
+    </li>
+    <li><strong>Section & Tab Management:</strong>
+      <ul>
+        <li>Click <code>+ Add Section</code> to group related fields (e.g., "Financial Details" or "Technical Requirements").</li>
+        <li>Toggle sections to be <strong>Collapsible</strong> by default to keep long forms neat.</li>
+      </ul>
+    </li>
+    <li><strong>Field Visibility & Rules:</strong>
+      <ul>
+        <li>Toggle <strong>Hidden</strong> to remove fields your team never uses.</li>
+        <li>Toggle <strong>Mandatory</strong> to ensure reps cannot save the form without completing essential data.</li>
+      </ul>
+    </li>
+    <li>Click <strong>Save Layout</strong>. The new design applies instantly for all team members!</li>
+  </ol>
+
+  <div id="ch14" class="avoid-break">
+    <h2>14. How to Tweak Things: Custom Fields in Desk</h2>
+    <p>Need to capture custom business data (e.g., "Contract Renewal Date", "Preferred Cloud Provider", "Discount %")?</p>
+
+    <h3>Adding Custom Fields with "Customize Form"</h3>
+    <ol>
+      <li>In Desk, press <kbd>Ctrl</kbd> + <kbd>G</kbd> &rarr; Type <strong>Customize Form</strong> &rarr; Hit Enter.</li>
+      <li>In the <strong>Enter DocType</strong> field, select <code>CRM Lead</code> or <code>CRM Deal</code>.</li>
+      <li>Scroll down to the <strong>Fields Table</strong>. Click <code>Add Row</code>.</li>
+      <li>Fill in the field properties:
+        <ul>
+          <li><strong>Label:</strong> User-friendly title (e.g. <code>Target Budget</code>).</li>
+          <li><strong>Type:</strong> Select from <em>Currency, Data, Int, Select (dropdown), Date, Check (checkbox), Attach (file upload), etc.</em></li>
+          <li><strong>Options:</strong> If using a <em>Select</em> dropdown, enter each option on a new line (e.g. <code>Tier 1\nTier 2\nTier 3</code>).</li>
+        </ul>
+      </li>
+      <li><strong>Dynamic Display Logic (<code>Depends On</code>):</strong>
+        <p>Want a field to appear <em>only</em> under certain conditions? In the <code>Depends On</code> property, enter simple logic:
+        <br><code>eval:doc.status=='Lost'</code> &rarr; Displays this field only when deal status is Lost!
+        <br><code>eval:doc.deal_value &gt; 10000</code> &rarr; Displays only for high-value deals!</p>
+      </li>
+      <li>Click <strong>Save</strong>. The field is immediately live in both Desk and the CRM frontend.</li>
+    </ol>
+  </div>
+</div>
+
+<!-- CHAPTER 15, 16, 17: STATUSES, ALERTS, WORKFLOWS -->
+<div id="ch15" class="page-break">
+  <h1>15. Tweaking Statuses, Pipelines & Dropdowns</h1>
+  <p class="section-intro">
+    Your sales process is unique. Customize stages, lead sources, and lost reasons to mirror your exact sales playbook.
+  </p>
+
+  <div class="grid-2col">
+    <div class="card-box">
+      <h4>Customizing Deal Stages (<code>CRM Deal Status</code>)</h4>
+      <p>Navigate to <strong>CRM Deal Status List</strong> in Desk or CRM Settings:</p>
+      <ul>
+        <li>Click <code>+ New</code> or open an existing stage.</li>
+        <li><strong>Stage Name:</strong> e.g. <em>Demo Completed</em>.</li>
+        <li><strong>Pipeline Order:</strong> Set sequence number.</li>
+        <li><strong>Win Probability (%):</strong> Set default closing probability for this stage (e.g., 50%).</li>
+        <li><strong>Color:</strong> Choose a badge color for cards.</li>
+      </ul>
+    </div>
+    <div class="card-box">
+      <h4>Customizing Lead Statuses & Sources</h4>
+      <ul>
+        <li><strong>CRM Lead Status:</strong> Add stages like <em>Attempted Contact</em>, <em>Nurturing</em>, or <em>Callback Requested</em>.</li>
+        <li><strong>CRM Lead Source:</strong> Track where deals originate. Add options like <em>LinkedIn Inbound</em>, <em>Webinar 2026</em>, <em>Partner Referral</em>.</li>
+        <li><strong>CRM Lost Reason:</strong> Add options like <em>Competitor Price</em>, <em>Budget Frozen</em>, <em>Timing Not Right</em>.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="ch16" class="avoid-break">
+    <h2>16. Tweaking Notifications & Automated Alerts</h2>
+    <p>Ensure critical events never go unnoticed using Desk Notification Rules.</p>
+    <ol>
+      <li>In Desk Awesomebar, search for <strong>Notification List</strong> &rarr; Click <code>+ Add Notification</code>.</li>
+      <li><strong>Subject & Channel:</strong> Choose channel (<em>Email, Slack, or System Notification</em>).</li>
+      <li><strong>Trigger Event:</strong> Choose when to trigger:
+        <ul>
+          <li><em>After Save:</em> When a new record is created or updated.</li>
+          <li><em>Value Change:</em> When a specific field changes (e.g., when <code>status</code> changes to 'Won').</li>
+          <li><em>Days After / Days Before:</em> Trigger 3 days before <code>expected_close_date</code>.</li>
+        </ul>
+      </li>
+      <li><strong>Filter Conditions:</strong> e.g. <code>deal_value &gt;= 25000</code>.</li>
+      <li><strong>Recipients:</strong> Select Deal Owner, Sales Manager, or specific email addresses.</li>
+      <li><strong>Message Body:</strong> Customize the template with dynamic merge fields like:
+        <br><code>"High Value Deal Won! {{ doc.deal_name }} for {{ doc.currency }} {{ doc.deal_value }} has just closed!"</code></li>
+    </ol>
+  </div>
+
+  <div id="ch17" class="avoid-break">
+    <h2>17. Tweaking Workflows & Approval Governance</h2>
+    <p>Need strict sign-offs for high discounts or enterprise contract terms? Configure a <strong>Workflow</strong>:</p>
+    <ul>
+      <li><strong>Workflow States:</strong> Draft &rarr; Pending Sales Manager Approval &rarr; Approved &rarr; Rejected.</li>
+      <li><strong>Transition Rules:</strong> Specify which role has permission to click "Approve" (e.g., only users with the <code>Sales Manager</code> role).</li>
+      <li><strong>State Immutability:</strong> Automatically lock the record as read-only while it is pending approval to prevent sneaky modifications!</li>
+    </ul>
+  </div>
+</div>
+
+<!-- CHAPTER 18: FORM SCRIPTING -->
+<div id="ch18" class="page-break">
+  <h1>18. Low-Code Form Scripts: Tailored UI Automation</h1>
+  <p class="section-intro">
+    Need dynamic calculations, interactive pop-ups, or custom validation rules in the CRM? The system provides a powerful client-side scripting engine with <strong>no build step required</strong>.
+  </p>
+
+  <div class="callout callout-tweak">
+    <div class="callout-title">Where to add Form Scripts?</div>
+    Go to <strong>CRM Settings &rarr; Form Scripts</strong> (or Awesomebar &rarr; <code>CRM Form Script List</code>). Click <code>New</code>, pick the DocType (e.g., <code>CRM Deal</code>), ensure <em>Enabled</em> is checked, and paste your script. It activates instantly on next page load!
+  </div>
+
+  <h3>Recipe 1: Auto-Calculating Expected Value on the Fly</h3>
+  <p>Automatically compute estimated revenue whenever the Deal Value or Probability changes:</p>
+  <pre><code>class CRMDeal {
+  // Triggers automatically whenever deal_value or probability changes
+  deal_value() {
+    this.recalculateExpectedRevenue();
+  }
+
+  probability() {
+    this.recalculateExpectedRevenue();
+  }
+
+  recalculateExpectedRevenue() {
+    const val = Number(this.doc.deal_value) || 0;
+    const prob = Number(this.doc.probability) || 0;
+    // Writes directly to live form state
+    this.doc.expected_deal_value = Math.round(val * (prob / 100));
+  }
+}</code></pre>
+
+  <h3>Recipe 2: Mandatory Validation Before Saving</h3>
+  <p>Prevent sales reps from marking a deal as "Won" without specifying an expected delivery date:</p>
+  <pre><code>class CRMDeal {
+  validate() {
+    if (this.doc.status === "Won" && !this.doc.expected_close_date) {
+      this.throw("You must specify the Contract Date before marking a deal as Won!");
+    }
+  }
+}</code></pre>
+
+  <h3>Recipe 3: Interactive Pop-up Dialogs with <code>this.formDialog()</code></h3>
+  <p>Open a clean modal to collect structured inputs when a user clicks a custom button:</p>
+  <pre><code>class CRMLead {
+  async qualify_lead() {
+    const values = await this.formDialog({
+      title: "Quick Qualification Assessment",
+      fields: [
+        { label: "Confirmed Budget", fieldname: "budget", fieldtype: "Currency" },
+        { label: "Target Go-Live Date", fieldname: "go_live", fieldtype: "Date" },
+        { label: "Decision Maker Met?", fieldname: "dm_met", fieldtype: "Check" }
+      ],
+      primaryActionLabel: "Qualify & Proceed"
+    });
+
+    if (values) {
+      this.doc.status = "Qualified";
+      this.doc.annual_revenue = values.budget;
+      this.notify("Lead qualified successfully!", "success");
+    }
+  }
+}</code></pre>
+</div>
+
+<!-- CHAPTER 19 & 20: SECURITY & DAILY PLAYBOOKS -->
+<div id="ch19" class="page-break">
+  <h1>19. Security, Roles & User Access Permissions</h1>
+  <p class="section-intro">
+    Protect your valuable prospect database while ensuring reps have exactly the access they need to do their jobs.
+  </p>
+
+  <h3>Standard Role Profiles</h3>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Role</th>
+        <th style="width: 35%;">Permissions Scope</th>
+        <th>Typical Assignment</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>CRM User</strong></td>
+        <td>Read, Write, and Create on Leads, Deals, Contacts, Organizations, and Tasks. Cannot delete records or access system settings.</td>
+        <td>Account Executives, SDRs, Field Sales Reps.</td>
+      </tr>
+      <tr>
+        <td><strong>CRM Manager</strong></td>
+        <td>All CRM User permissions plus: View reports, export data, manage assignment rules, reassign leads, edit sales stages.</td>
+        <td>Team Leads, Sales Directors, VP Sales.</td>
+      </tr>
+      <tr>
+        <td><strong>System Manager</strong></td>
+        <td>Unrestricted administrative access across both Desk and CRM frontend. Custom fields, workflows, role management.</td>
+        <td>System Administrators, IT Leads, Operations.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Restricting Access with User Permissions</h3>
+  <p>Want a sales rep to <strong>only</strong> see Leads and Deals in their specific country or territory?</p>
+  <ol>
+    <li>In Desk Awesomebar, open <strong>User Permission List</strong> &rarr; Click <code>+ Add User Permission</code>.</li>
+    <li>Select the <strong>User</strong> (e.g. <code>john@company.com</code>).</li>
+    <li>Select <strong>DocType:</strong> <code>CRM Territory</code> &rarr; <strong>For Value:</strong> <code>United Kingdom</code>.</li>
+    <li>Check <em>Apply to All Related DocTypes</em> &rarr; Save.</li>
+    <li>From that moment, John can only view leads, deals, and contacts belonging to the United Kingdom territory!</li>
+  </ol>
+
+  <div id="ch20">
+    <h2>20. Daily Playbooks & Troubleshooting FAQ</h2>
+
+    <div class="grid-2col">
+      <div class="card-box" style="border-top: 3px solid #6366f1;">
+        <h4>The 5-Step Daily Sales Rep Routine</h4>
+        <ol>
+          <li><strong>Check SLA Notifications:</strong> Review the bell icon for newly assigned inbound leads nearing first-touch breach.</li>
+          <li><strong>Execute First Touch:</strong> Call or email new prospects directly from the lead timeline.</li>
+          <li><strong>Review Overdue Tasks:</strong> Open <em>Tasks</em>, filter by "Due Today", complete client callbacks.</li>
+          <li><strong>Update Kanban Stages:</strong> Move active deals across stages, update close dates and values.</li>
+          <li><strong>Log Next Actions:</strong> Always schedule a follow-up task before closing any record!</li>
+        </ol>
+      </div>
+
+      <div class="card-box" style="border-top: 3px solid #10b981;">
+        <h4>The Weekly Sales Manager Routine</h4>
+        <ol>
+          <li><strong>Pipeline Hygiene Audit:</strong> Filter deals with close dates in the past; require reps to update.</li>
+          <li><strong>SLA Breach Review:</strong> Inspect response times by rep to identify lead distribution bottlenecks.</li>
+          <li><strong>Lost Deal Analysis:</strong> Review lost reasons to spot recurring pricing or competitive objections.</li>
+          <li><strong>Forecast Review:</strong> Compare total pipeline value against monthly target quotas.</li>
+        </ol>
+      </div>
+    </div>
+
+    <h3>Troubleshooting FAQ</h3>
+    <ul>
+      <li><strong>Q: Why can't a rep see a newly assigned deal?</strong>
+        <br><em>A:</em> Check User Permissions in Desk to ensure they are not restricted by Territory, or verify Sales Hierarchy settings in <code>FCRM Settings</code>.</li>
+      <li><strong>Q: Why aren't incoming emails appearing in the lead timeline?</strong>
+        <br><em>A:</em> Go to <strong>CRM Settings &rarr; Email Accounts</strong>. Ensure <em>Enable Incoming (IMAP)</em> is checked and the password/app-token is valid.</li>
+      <li><strong>Q: How do I recover a deleted lead or deal?</strong>
+        <br><em>A:</em> In Desk, search for <strong>Deleted Document List</strong> in the Awesomebar. Locate the record and click <code>Restore</code>.</li>
+    </ul>
+  </div>
+
+  <div class="header-rule"></div>
+  <div style="text-align: center; font-size: 9pt; color: #64748b; padding-bottom: 20px;">
+    &mdash; End of Official Operations Manual &bull; Generated for Frappe CRM &bull; All Rights Reserved &mdash;
+  </div>
+</div>
+
+</body>
+</html>

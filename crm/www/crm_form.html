@@ -564,6 +564,22 @@
           var original = btn.textContent;
           btn.textContent = "Submitting…";
 
+          // [submission-bridge:start]
+          function notifyEmbeddingPage(values) {
+            if (!EMBED || DRAFT || DOCTYPE !== "CRM Lead" || window.parent === window) return;
+            try {
+              var targetOrigin = new URL(document.referrer).origin;
+              if (!/^https?:\/\//.test(targetOrigin)) return;
+              window.parent.postMessage({
+                type: "crm:form-submitted",
+                documentType: DOCTYPE,
+                formName: WEB_FORM,
+                identity: { email: values.email || values.email_id || "", phone: values.mobile_no || values.phone || "" }
+              }, targetOrigin);
+            } catch (_) { /* A missing referrer disables the optional bridge. */ }
+          }
+          // [submission-bridge:end]
+
           // Draft preview → dry-run (validate only, no record). Published → submit
           // through Frappe's built-in Web Form engine (validation + insert).
           var endpoint = DRAFT
@@ -593,6 +609,8 @@
                 btn.textContent = original;
                 return;
               }
+              // Notify only after a successful insert, before resetting or redirecting.
+              notifyEmbeddingPage(values);
               // embedded (and not redirecting): clear in place for the next submission
               // instead of swapping the form out for the success page
               if (EMBED && !DRAFT && !SUCCESS_URL) {
