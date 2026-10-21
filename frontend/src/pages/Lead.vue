@@ -70,7 +70,13 @@
         />
       </template>
     </Tabs>
-    <Resizer class="flex flex-col justify-between border-l" side="right">
+    <Resizer
+      class="flex flex-col justify-between border-l"
+      side="right"
+      :defaultWidth="440"
+      :minWidth="352"
+      :maxWidth="640"
+    >
       <div
         class="flex h-[45px] cursor-copy items-center border-b px-5 py-2.5 text-lg-medium text-ink-gray-9"
         @click="copyToClipboard(leadId)"

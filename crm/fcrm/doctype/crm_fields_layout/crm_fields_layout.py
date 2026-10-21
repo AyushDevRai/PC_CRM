@@ -147,6 +147,9 @@ def get_sidepanel_sections(doctype: str):
 
 
 def handle_perm_level_restrictions(field, doctype, parent_doctype=None):
+	if field.get("fieldname") == "custom_intent_score":
+		is_admin = frappe.session.user == "Administrator" or "System Manager" in frappe.get_roles()
+		field["read_only"] = 0 if is_admin else 1
 	if field.permlevel == 0:
 		return
 	field_has_write_access = field.permlevel in get_permlevel_access("write", doctype, parent_doctype)
@@ -177,6 +180,9 @@ def get_permlevel_access(permission_type="write", doctype=None, parent_doctype=N
 
 
 def get_field_obj(field):
+	if field.get("fieldname") == "custom_intent_score":
+		is_admin = frappe.session.user == "Administrator" or "System Manager" in frappe.get_roles()
+		field["read_only"] = 0 if is_admin else 1
 	field["placeholder"] = field.get("placeholder") or "Add " + field.label + "..."
 
 	if field.fieldtype == "Link":

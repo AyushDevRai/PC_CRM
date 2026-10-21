@@ -53,6 +53,20 @@
               :type="field.type"
               :placeholder="field.placeholder"
             />
+            <p
+              v-if="field.name === 'password' && selectedService?.name === 'GMail'"
+              class="text-xs text-ink-gray-5 mt-1"
+            >
+              {{ __('Google accounts require a 16-character App Password (not your regular Gmail password). Generate one in') }}
+              <a
+                href="https://myaccount.google.com/apppasswords"
+                target="_blank"
+                class="underline text-ink-blue-3 hover:text-ink-blue-4"
+              >
+                {{ __('Google Security') }}
+              </a>
+              .
+            </p>
           </div>
         </div>
         <div class="grid grid-cols-2 gap-4">
@@ -125,9 +139,24 @@ const state = reactive({
 const { capture } = useTelemetry()
 
 const selectedService = ref(null)
-const fields = computed(() =>
-  selectedService.value.custom ? customProviderFields : popularProviderFields,
-)
+const fields = computed(() => {
+  if (selectedService.value?.custom) {
+    return customProviderFields
+  }
+  if (selectedService.value?.name === 'GMail') {
+    return popularProviderFields.map((f) => {
+      if (f.name === 'password') {
+        return {
+          ...f,
+          label: __('Google App Password'),
+          placeholder: '16-character App Password (e.g. abcd efgh ijkl mnop)',
+        }
+      }
+      return f
+    })
+  }
+  return popularProviderFields
+})
 
 function handleSelect(service) {
   selectedService.value = service
@@ -145,8 +174,24 @@ const addEmailRes = createResource({
     toast.success(__('Email account created successfully'))
     emit('update:step', 'email-list')
   },
-  onError: () => {
-    error.value = __('Failed to create email account: invalid credentials')
+  onError: (err) => {
+    let msg = ''
+    if (err?._server_messages) {
+      try {
+        const parsed = JSON.parse(err._server_messages)
+        msg = JSON.parse(parsed[0]).message
+      } catch (e) {}
+    }
+    if (!msg && err?.messages?.[0]) {
+      msg = err.messages[0]
+    }
+    if (!msg && err?.message) {
+      msg = err.message
+    }
+    if (!msg && typeof err === 'string') {
+      msg = err
+    }
+    error.value = msg || __('Failed to create email account: invalid credentials')
   },
 })
 

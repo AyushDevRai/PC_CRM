@@ -87,6 +87,7 @@ async function saveAssignees(
     }
   } else if (!document.doc[ownerField.value] && nextAssignee) {
     document.doc[ownerField.value] = nextAssignee ? nextAssignee.name : ''
+    document.save.submit()
     toast.info(
       __('Since you added a new assignee, the {0} has been set to {1}.', [
         owner,

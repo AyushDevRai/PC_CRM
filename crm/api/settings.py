@@ -3,25 +3,42 @@ import frappe
 
 @frappe.whitelist()
 def create_email_account(data: dict):
+	if isinstance(data, str):
+		data = frappe.parse_json(data)
+
 	service = data.get("service")
 	service_config = email_service_config.get(service)
 	if not service_config:
-		return "Service not supported"
+		frappe.throw(frappe._("Service '{0}' is not supported").format(service))
 
 	try:
+		password = data.get("password") or ""
+		if isinstance(password, str):
+			password = password.strip()
+			if service == "GMail":
+				# Google App Passwords are 16 characters, often formatted with spaces like 'abcd efgh ijkl mnop'
+				cleaned = password.replace(" ", "")
+				if len(cleaned) == 16:
+					password = cleaned
+
+		enable_incoming = 1 if data.get("enable_incoming") else 0
+		enable_outgoing = 1 if data.get("enable_outgoing") else 0
+		create_lead = 1 if data.get("create_lead_from_incoming_email") else 0
+
 		email_doc = frappe.get_doc(
 			{
 				"doctype": "Email Account",
-				"email_id": data.get("email_id"),
-				"email_account_name": data.get("email_account_name"),
+				"email_id": (data.get("email_id") or "").strip(),
+				"email_account_name": (data.get("email_account_name") or "").strip(),
 				"service": service,
-				"enable_incoming": data.get("enable_incoming"),
-				"enable_outgoing": data.get("enable_outgoing"),
-				"default_incoming": data.get("default_incoming"),
-				"default_outgoing": data.get("default_outgoing"),
+				"enable_incoming": enable_incoming,
+				"enable_outgoing": enable_outgoing,
+				"default_incoming": 1 if data.get("default_incoming") else 0,
+				"default_outgoing": 1 if data.get("default_outgoing") else 0,
+				"create_lead_from_incoming_email": create_lead,
+				"create_contact": create_lead,
 				"email_sync_option": "ALL",
 				"initial_sync_count": 100,
-				"create_contact": 1,
 				"track_email_status": 1,
 				"use_tls": 1,
 				"use_imap": 1,
@@ -33,17 +50,50 @@ def create_email_account(data: dict):
 			email_doc.api_key = data.get("api_key")
 			email_doc.api_secret = data.get("api_secret")
 			email_doc.frappe_mail_site = data.get("frappe_mail_site")
-			email_doc.append_to = "CRM Lead"
+			if create_lead:
+				email_doc.append_to = "CRM Lead"
 		else:
-			email_doc.append("imap_folder", {"append_to": "CRM Lead", "folder_name": "INBOX"})
-			email_doc.password = data.get("password")
-			# validate whether the credentials are correct
-			email_doc.get_incoming_server()
+			if enable_incoming:
+				email_doc.append(
+					"imap_folder",
+					{
+						"append_to": "CRM Lead" if create_lead else None,
+						"folder_name": "INBOX",
+					},
+				)
+			email_doc.password = password
 
-		# if correct credentials, save the email account
+		# EmailAccount.validate automatically checks IMAP connection if enable_incoming,
+		# and SMTP connection if enable_outgoing.
 		email_doc.save()
 	except Exception as e:
-		frappe.throw(str(e))
+		err_str = str(e)
+		is_cred_error = (
+			"AUTHENTICATIONFAILED" in err_str
+			or "Invalid credentials" in err_str
+			or "Authentication failed" in err_str
+			or "Please check your email login credentials" in err_str
+			or isinstance(e, frappe.email.smtp.InvalidEmailCredentials)
+		)
+		if is_cred_error:
+			frappe.clear_messages()
+			if service == "GMail":
+				frappe.throw(
+					frappe._(
+						"Invalid credentials for Gmail. Google requires a 16-character App Password (not your normal Google account password). Please enable 2-Step Verification in your Google Account security settings, create an App Password at https://myaccount.google.com/apppasswords, and paste it here."
+					)
+				)
+			elif service == "Outlook":
+				frappe.throw(
+					frappe._(
+						"Invalid credentials for Outlook. If 2FA is enabled on your Microsoft account, please generate an App Password in your Microsoft Account security settings."
+					)
+				)
+			else:
+				frappe.throw(
+					frappe._("Invalid credentials for {0}. Please verify your username and password.").format(service)
+				)
+		frappe.throw(err_str)
 
 
 email_service_config = {

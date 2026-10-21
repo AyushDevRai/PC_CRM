@@ -16,9 +16,9 @@
 import { ref } from 'vue'
 
 const props = defineProps({
-  defaultWidth: { type: Number, default: 352 },
+  defaultWidth: { type: Number, default: 440 },
   minWidth: { type: Number, default: 16 * 16 },
-  maxWidth: { type: Number, default: 30 * 16 },
+  maxWidth: { type: Number, default: 40 * 16 },
   side: { type: String, default: 'left' },
   parent: { type: Object, default: null },
 })
@@ -33,6 +33,9 @@ function getInitialWidth() {
     storedWidth >= props.minWidth &&
     storedWidth <= props.maxWidth
   ) {
+    if (storedWidth < props.defaultWidth) {
+      return props.defaultWidth
+    }
     return storedWidth
   }
   return props.defaultWidth

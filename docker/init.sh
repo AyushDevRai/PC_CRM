@@ -1,12 +1,19 @@
-#!bin/bash
+#!/bin/bash
+set -e
+
+# Disable MariaDB client SSL to prevent TLS/SSL errors with non-SSL docker MariaDB
+cat << 'EOF' > /home/frappe/.my.cnf
+[client]
+ssl = 0
+EOF
 
 if [ -d "/home/frappe/frappe-bench/apps/frappe" ]; then
     echo "Bench already exists, skipping init"
-    cd frappe-bench
-    bench start
-else
-    echo "Creating new bench..."
+    cd /home/frappe/frappe-bench
+    exec bench start
 fi
+
+echo "Creating new bench..."
 
 bench init --skip-redis-config-generation frappe-bench --version version-15
 
@@ -33,9 +40,9 @@ bench new-site crm.localhost \
 
 bench --site crm.localhost install-app crm
 bench --site crm.localhost set-config developer_mode 1
-bench --site crm.localhost set-config mute_emails 1
+bench --site crm.localhost set-config mute_emails 0
 bench --site crm.localhost set-config server_script_enabled 1
 bench --site crm.localhost clear-cache
 bench use crm.localhost
 
-bench start
+exec bench start

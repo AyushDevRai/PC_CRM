@@ -39,7 +39,7 @@
                     v-if="field.visible"
                     class="field flex gap-2 px-3 leading-5 first:mt-3"
                     :class="
-                      isTextareaField(field) ? 'items-start' : 'items-center'
+                      isMultilineField(field) ? 'items-start py-1' : 'items-center'
                     "
                   >
                     <Tooltip
@@ -48,10 +48,10 @@
                       :hoverDelay="1000"
                     >
                       <div
-                        class="w-[35%] min-w-20 shrink-0 flex items-center gap-0.5"
-                        :class="{ 'pt-[9px]': isTextareaField(field) }"
+                        class="w-[38%] min-w-24 shrink-0 flex items-center gap-0.5"
+                        :class="{ 'pt-1': isMultilineField(field) }"
                       >
-                        <div class="truncate text-sm text-ink-gray-5">
+                        <div class="truncate text-sm text-ink-gray-5" :title="__(field.label)">
                           {{ __(field.label) }}
                         </div>
                         <div
@@ -71,11 +71,11 @@
                         'flex items-center justify-between',
                         ['Button', 'HTML'].includes(field.fieldtype)
                           ? 'w-full'
-                          : 'w-[65%]',
+                          : 'w-[62%]',
                       ]"
                     >
                       <div
-                        class="grid min-h-[28px] flex-1 items-center overflow-hidden text-base"
+                        class="grid min-h-[28px] flex-1 items-center text-base"
                       >
                         <div
                           v-if="
@@ -97,10 +97,10 @@
                               'Text Editor',
                             ].includes(field.fieldtype)
                           "
-                          class="flex h-7 cursor-pointer items-center px-2 py-1 text-ink-gray-5"
+                          class="flex min-h-7 h-auto cursor-pointer items-start px-2 py-1 text-ink-gray-5 text-sm leading-normal break-words whitespace-pre-wrap"
                         >
                           <Tooltip :text="__(field.tooltip)">
-                            <div>{{ doc[field.fieldname] }}</div>
+                            <div class="break-words whitespace-pre-wrap leading-relaxed">{{ doc[field.fieldname] }}</div>
                           </Tooltip>
                         </div>
                         <PrimaryDropdown
@@ -685,6 +685,14 @@ function isTextareaField(field) {
   return textareaFieldtypes.includes(field.fieldtype)
 }
 
+function isMultilineField(field) {
+  if (isTextareaField(field)) return true
+  if (['custom_playbook', 'custom_classification_notes'].includes(field?.fieldname)) return true
+  const val = doc.value?.[field?.fieldname]
+  if (typeof val === 'string' && (val.includes('\n') || val.length > 40)) return true
+  return false
+}
+
 function ratingMax(field) {
   return Number(field.options) || 5
 }
@@ -765,7 +773,7 @@ function checkChange(value, df) {
 }
 
 .sections .section .column {
-  max-height: 300px;
+  max-height: none;
 }
 .sections .section:last-of-type .column {
   max-height: none;

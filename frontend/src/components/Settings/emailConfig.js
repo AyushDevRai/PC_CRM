@@ -102,9 +102,9 @@ export const services = [
     name: 'GMail',
     icon: LogoGmail,
     info: __(
-      'Setting up GMail requires you to enable two factor authentication and app specific passwords. Read more',
+      'Google requires 2-Step Verification and a 16-character App Password (not your regular Gmail password) to connect. Generate one',
     ),
-    link: 'https://support.google.com/accounts/answer/185833',
+    link: 'https://myaccount.google.com/apppasswords',
     custom: false,
   },
   {

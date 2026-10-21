@@ -1,6 +1,6 @@
 app_name = "crm"
-app_title = "PC CRM"
-app_publisher = "PC"
+app_title = "Frappe CRM"
+app_publisher = "Frappe Technologies Pvt. Ltd."
 app_description = "Kick-ass Open Source CRM"
 app_email = "shariq@frappe.io"
 app_license = "AGPLv3"
@@ -11,7 +11,7 @@ app_icon_route = "/crm"
 # Apps
 # ------------------
 
-required_apps = ["whatsapp"]
+# required_apps = []
 add_to_apps_screen = [
 	{
 		"name": "crm",
@@ -139,12 +139,14 @@ permission_query_conditions = {
 	"CRM Lead": "crm.permissions.org_hierarchy.get_lead_permission_query_conditions",
 	"CRM Deal": "crm.permissions.org_hierarchy.get_deal_permission_query_conditions",
 	"CRM Notification": "crm.fcrm.doctype.crm_notification.crm_notification.get_permission_query_conditions",
+	"CRM Enrichment Run": "crm.domain_enrichment.doctype.crm_enrichment_run.crm_enrichment_run.get_permission_query_conditions",
 }
 
 has_permission = {
 	"CRM Lead": "crm.permissions.org_hierarchy.has_lead_permission",
 	"CRM Deal": "crm.permissions.org_hierarchy.has_deal_permission",
 	"CRM Notification": "crm.fcrm.doctype.crm_notification.crm_notification.has_permission",
+	"CRM Enrichment Run": "crm.domain_enrichment.doctype.crm_enrichment_run.crm_enrichment_run.has_permission",
 }
 
 # Automation Engine
@@ -260,10 +262,10 @@ doc_events = {
 		"after_insert": ["crm.utils.on_comment_insert"],
 		"on_update": ["crm.api.comment.on_update"],
 	},
-	"WA Message": {
+	"WhatsApp Message": {
 		"validate": ["crm.api.whatsapp.validate"],
 		"on_update": [
-			"crm.api.whatsapp.notify_agent",
+			"crm.api.whatsapp.on_update",
 			"crm.automation.events.on_whatsapp_message",
 		],
 	},
@@ -274,7 +276,15 @@ doc_events = {
 		],
 	},
 	"CRM Lead": {
-		"on_update": ["crm.automation.events.on_lead_update"],
+		"on_update": [
+			"crm.automation.events.on_lead_update",
+			"crm.automation.lead_sla.on_lead_update",
+		],
+	},
+	"CRM Call Log": {
+		"after_insert": [
+			"crm.automation.lead_sla.on_call_log_insert",
+		],
 	},
 	"Sales Order": {
 		"before_validate": [
@@ -317,31 +327,24 @@ doc_events = {
 	},
 }
 
-# The whatsapp app has no role model of its own; this gates its whitelisted
-# endpoints on CRM's sales roles.
-whatsapp_access_guard = ["crm.api.whatsapp.validate_access"]
-
 # Scheduled Tasks
 # ---------------
 
 scheduler_events = {
-	"all": ["crm.api.event.trigger_offset_event_notifications"],
-	"hourly": [
-		"crm.api.event.trigger_hourly_event_notifications",
-		"crm.automation.events.emit_overdue_tasks",
-	],
+	"hourly": ["crm.automation.events.emit_overdue_tasks"],
 	"daily": [
-		"crm.api.event.trigger_daily_event_notifications",
 		"crm.fcrm.doctype.crm_invitation.crm_invitation.expire_invitations",
 		"crm.fcrm.doctype.crm_view_settings.crm_view_settings.clear_old_versions",
 		"crm.telemetry.capture_feature_state",
 	],
-	"weekly": ["crm.api.event.trigger_weekly_event_notifications"],
 	"daily_long": ["crm.lead_syncing.background_sync.sync_leads_from_sources_daily"],
 	"hourly_long": ["crm.lead_syncing.background_sync.sync_leads_from_sources_hourly"],
 	"monthly_long": ["crm.lead_syncing.background_sync.sync_leads_from_sources_monthly"],
 	"cron": {
-		"*/5 * * * *": ["crm.lead_syncing.background_sync.sync_leads_from_sources_5_minutes"],
+		"*/5 * * * *": [
+			"crm.lead_syncing.background_sync.sync_leads_from_sources_5_minutes",
+			"crm.automation.lead_sla.check_sla_deadlines_and_reminders",
+		],
 		"*/10 * * * *": ["crm.lead_syncing.background_sync.sync_leads_from_sources_10_minutes"],
 		"*/15 * * * *": ["crm.lead_syncing.background_sync.sync_leads_from_sources_15_minutes"],
 	},
@@ -421,9 +424,9 @@ on_session_creation = ["crm.api.onboarding.complete_setup_for_fc_site"]
 after_migrate = [
 	"crm.fcrm.doctype.fcrm_settings.fcrm_settings.after_migrate",
 	"crm.api.whatsapp.add_roles",
-	"crm.domain_enrichment.install.seed_default_rules_and_mappings",
 	"crm.install.add_default_scripts",
 	"crm.install.add_web_form_custom_fields",
+	"crm.domain_enrichment.install.seed_default_rules_and_mappings",
 ]
 
 standard_dropdown_items = [

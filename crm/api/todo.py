@@ -25,6 +25,16 @@ def after_insert(doc, method):
 			doc.reference_type, doc.reference_name, fieldname, doc.allocated_to, update_modified=False
 		)
 
+		if doc.reference_type == "CRM Lead":
+			try:
+				from crm.automation.lead_sla import on_lead_update
+
+				lead = frappe.get_doc("CRM Lead", doc.reference_name)
+				lead.lead_owner = doc.allocated_to
+				on_lead_update(lead)
+			except Exception as e:
+				frappe.logger().error(f"Failed to process SLA on lead assignment: {e}")
+
 	if doc.reference_type in ["CRM Lead", "CRM Deal", "CRM Task"] and doc.reference_name and doc.allocated_to:
 		notify_assigned_user(doc)
 
