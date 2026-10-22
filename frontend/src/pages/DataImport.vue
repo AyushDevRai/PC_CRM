@@ -8,9 +8,14 @@
 
 <script setup>
 import { usePageMeta } from 'frappe-ui'
-import { DataImport } from '@framework/ui/components/DataImport'
+import * as DataImportModule from '@framework/ui/components/DataImport'
 import { useRoute } from 'vue-router'
 import { getSettings } from '@/stores/settings'
+
+const DataImport =
+  DataImportModule.DataImportWizard ||
+  DataImportModule.DataImport ||
+  DataImportModule.default
 
 const route = useRoute()
 const { brand } = getSettings()
