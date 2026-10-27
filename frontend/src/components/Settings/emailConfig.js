@@ -156,9 +156,9 @@ export const services = [
     name: 'Frappe Mail',
     icon: LogoFrappeMail,
     info: __(
-      'Setting up Frappe Mail requires you to have an API key and API secret for your email account. Read more',
+      'Setting up Frappe Mail requires you to have an API key and API secret for your email account.',
     ),
-    link: 'https://github.com/frappe/mail',
+    link: '',
     custom: true,
   },
 ]

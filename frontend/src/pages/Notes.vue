@@ -120,7 +120,6 @@
       )
     "
     :filtered="!!Object.keys(notes.params?.filters || {}).length"
-    docsLink="https://docs.frappe.io/crm/note"
     @create="createNote"
   />
 </template>

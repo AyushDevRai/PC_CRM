@@ -56,7 +56,6 @@
       __('Organizations are the companies your contacts and deals belong to.')
     "
     :filtered="!!Object.keys(organizations.params?.filters || {}).length"
-    docsLink="https://docs.frappe.io/crm/organization"
     importDoctype="CRM Organization"
     @create="showOrganizationModal = true"
   />

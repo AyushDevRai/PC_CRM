@@ -9,14 +9,6 @@
         <h2 class="flex text-2xl-semibold leading-none h-5">
           {{ __('Workflow Automations') }}
         </h2>
-        <Tooltip :text="__('View documentation')">
-          <a
-            href="https://docs.frappe.io/wiki-app/spaces/22qcan55rk/page/36r50jmgu2"
-            target="_blank"
-          >
-            <LucideCircleQuestionMark class="h-4 w-4 text-ink-gray-6" />
-          </a>
-        </Tooltip>
       </div>
     </template>
     <template #header-actions>

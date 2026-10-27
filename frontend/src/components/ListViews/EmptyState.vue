@@ -15,7 +15,7 @@
         </span>
       </div>
       <div
-        v-if="onCreate || importDoctype || docsLink"
+        v-if="onCreate || importDoctype"
         class="mt-2 flex flex-wrap items-center justify-center gap-2"
       >
         <Button
@@ -30,13 +30,6 @@
           :label="__('Import')"
           iconLeft="lucide-upload"
           :route="{ name: 'NewDataImport', params: { doctype: importDoctype } }"
-        />
-        <Button
-          v-if="docsLink"
-          variant="outline"
-          :label="__('Documentation')"
-          iconLeft="lucide-external-link"
-          :href="docsLink"
         />
       </div>
     </div>
