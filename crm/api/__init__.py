@@ -132,11 +132,27 @@ def invite_by_email(emails: str, role: str):
 		filters={
 			"email": ["in", email_list],
 			"role": ["in", ["System Manager", "Sales Manager", "Sales User"]],
+			"status": "Pending",
 		},
 		pluck="email",
 	)
 
 	to_invite = list(set(email_list) - set(existing_members) - set(existing_invites))
+
+	if not to_invite:
+		if existing_members:
+			frappe.throw(
+				_("The following users are already members of the CRM: {0}").format(", ".join(existing_members))
+			)
+		if existing_invites:
+			frappe.throw(
+				_("An invitation is already pending for: {0}").format(", ".join(existing_invites))
+			)
+		return {
+			"existing_members": existing_members,
+			"existing_invites": existing_invites,
+			"to_invite": [],
+		}
 
 	for email in to_invite:
 		frappe.get_doc(doctype="CRM Invitation", email=email, role=role).insert(ignore_permissions=True)
