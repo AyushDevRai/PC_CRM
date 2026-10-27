@@ -6,6 +6,7 @@ from frappe import _
 from frappe.model.document import Document
 
 from crm.api.user import validate_no_role_profile
+from crm.utils import get_clean_url
 
 
 class CRMInvitation(Document):
@@ -38,7 +39,7 @@ class CRMInvitation(Document):
 		self.invite_via_email()
 
 	def invite_via_email(self):
-		invite_link = frappe.utils.get_url(f"/api/method/crm.api.accept_invitation?key={self.key}")
+		invite_link = get_clean_url(f"/api/method/crm.api.accept_invitation?key={self.key}")
 		if frappe.local.dev_server:
 			print(f"Invite link for {self.email}: {invite_link}")  # nosemgrep
 

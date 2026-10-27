@@ -40,6 +40,7 @@ bench new-site crm.localhost \
 
 bench --site crm.localhost install-app crm
 bench --site crm.localhost set-config developer_mode 1
+bench --site crm.localhost set-config host_name "http://crm.eastasia.cloudapp.azure.com"
 bench --site crm.localhost set-config mute_emails 0
 bench --site crm.localhost set-config server_script_enabled 1
 bench --site crm.localhost clear-cache

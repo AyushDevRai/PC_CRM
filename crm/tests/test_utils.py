@@ -707,3 +707,30 @@ class TestNormalizePhone(IntegrationTestCase):
 
 		self.assertEqual(phone_search_digits("+91 98765 43210", region="IN"), "9876543210")
 		self.assertEqual(phone_search_digits("+9999999999", region="IN"), "9999999999")
+
+
+class TestSanitizePublicUrl(UnitTestCase):
+	def test_strips_internal_port_on_public_domain(self):
+		from crm.utils import sanitize_public_url
+
+		url = "http://crm.eastasia.cloudapp.azure.com:8000/api/method/crm.api.accept_invitation?key=27048fb847fd"
+		expected = "http://crm.eastasia.cloudapp.azure.com/api/method/crm.api.accept_invitation?key=27048fb847fd"
+		self.assertEqual(sanitize_public_url(url), expected)
+
+	def test_preserves_port_on_localhost(self):
+		from crm.utils import sanitize_public_url
+
+		url = "http://localhost:8000/api/method/crm.api.accept_invitation?key=27048fb847fd"
+		self.assertEqual(sanitize_public_url(url), url)
+
+		url_127 = "http://127.0.0.1:8000/api/method/crm.api.accept_invitation?key=27048fb847fd"
+		self.assertEqual(sanitize_public_url(url_127), url_127)
+
+	def test_handles_relative_and_empty_urls(self):
+		from crm.utils import sanitize_public_url
+
+		self.assertEqual(sanitize_public_url("/crm"), "/crm")
+		self.assertEqual(sanitize_public_url("/update-password?key=abc"), "/update-password?key=abc")
+		self.assertEqual(sanitize_public_url(""), "")
+		self.assertIsNone(sanitize_public_url(None))
+

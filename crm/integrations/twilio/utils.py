@@ -1,8 +1,9 @@
+from crm.utils import get_clean_url
 from frappe.utils import get_url
 
 
 def get_public_url(path: str | None = None):
-	return get_url().split(":8", 1)[0] + path
+	return get_clean_url(path)
 
 
 def merge_dicts(d1: dict, d2: dict):

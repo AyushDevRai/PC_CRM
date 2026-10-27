@@ -36,12 +36,13 @@ def redirect_to_set_password():
 	covers everyone else, on the same page.
 	"""
 	from crm.api.user import needs_password_setup
+	from crm.utils import sanitize_public_url
 
 	if not needs_password_setup():
 		return
 
 	user = frappe.get_doc("User", frappe.session.user)
-	link = user._reset_password()
+	link = sanitize_public_url(user._reset_password())
 
 	# this is a GET request, which is rolled back unless a commit is requested
 	frappe.local.flags.commit = True

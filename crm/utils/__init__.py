@@ -1,5 +1,6 @@
 import functools
 import re
+from urllib.parse import urlparse, urlunparse
 
 import frappe
 import phonenumbers
@@ -11,6 +12,61 @@ from phonenumbers import NumberParseException
 from phonenumbers import PhoneNumberFormat as PNF
 
 FALLBACK_REGION = "IN"
+
+
+def sanitize_public_url(url: str | None) -> str | None:
+	"""Strip internal development/bench ports (like 8000) from public-facing URLs
+	when deployed on external domains, while preserving them for local dev (localhost/127.0.0.1).
+	Also ensures appropriate scheme if forwarded headers indicate HTTPS."""
+	if not url:
+		return url
+
+	try:
+		parsed = urlparse(url)
+		if not parsed.netloc:
+			return url
+
+		hostname = parsed.hostname
+		port = parsed.port
+
+		# If running locally on localhost or 127.0.0.1, keep the port
+		is_local = (
+			not hostname
+			or hostname in ("localhost", "127.0.0.1", "0.0.0.0", "test_site")
+			or hostname.endswith(".localhost")
+			or hostname.endswith(".local")
+		)
+
+		if not is_local:
+			# On production / deployed VPS:
+			# Internal ports like 8000 (standard Frappe webserver_port / gunicorn) should not be exposed.
+			# Standard ports 80 and 443 are handled by Nginx / reverse proxy.
+			if port in (8000, 80, 443):
+				netloc = hostname
+				if parsed.username or parsed.password:
+					auth = f"{parsed.username or ''}{':' + parsed.password if parsed.password else ''}@"
+					netloc = f"{auth}{hostname}"
+
+				scheme = parsed.scheme
+				if getattr(frappe.local, "request", None):
+					forwarded_proto = frappe.local.request.headers.get("X-Forwarded-Proto")
+					if forwarded_proto:
+						scheme = forwarded_proto
+
+				parsed = parsed._replace(netloc=netloc, scheme=scheme)
+				return urlunparse(parsed)
+	except Exception:
+		pass
+
+	return url
+
+
+def get_clean_url(uri: str | None = None) -> str:
+	"""Wrapper around frappe.utils.get_url that ensures internal ports like 8000
+	are stripped on deployed VPS/production domains."""
+	raw_url = frappe.utils.get_url(uri)
+	return sanitize_public_url(raw_url) or raw_url
+
 
 
 def get_default_region() -> str:

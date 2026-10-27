@@ -126,6 +126,6 @@ class CRMTwilioSettings(Document):
 
 
 def get_public_url(path: str | None = None):
-	from frappe.utils import get_url
+	from crm.utils import get_clean_url
 
-	return get_url().split(":8", 1)[0] + path
+	return get_clean_url(path)
